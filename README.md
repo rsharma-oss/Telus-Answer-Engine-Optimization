@@ -27,5 +27,14 @@ Growth Automated's AEO engagement repo for **Telus**: ongoing AI visibility trac
 - **Weak prompts (all unbranded commercial-intent):** flexible monthly data plans 2 · home-office wireline 6 · SMB wireless 36 · price-sensitive families 38 · rural reliability prompt = 100
 - **Top source:** reddit.com (2,449 citations, influence 85); own properties telus.com + forum.telus.com ≈ 2,270 combined
 
+## Longitudinal tracking
+
+`data/longitudinal/telus.jsonl` is the append-only trajectory store — one record per pull date, seeded with five checkpoints backfilled from the archived scorecards (Jun 27 → Jul 13) plus the July 17 API pull. Two metric families are kept deliberately separate and must never be charted as one series:
+
+- `manual_analysis` — coverage % and avg-score-among-mentions from the dated manual snapshots
+- `api` — the tracking API's visibility score (0–100, share-of-answer weighted), per-model/per-prompt/competitor detail, and day-grain daily scores
+
+**Weekly refresh:** `scripts/refresh_visibility.py --brand telus` appends the current 30-day pull (idempotent per date). It reads `~/.config/aeo-tracker/config.json` (api_base, api_key, brand ids) — the key never enters this repo. `scripts/com.growthautomated.aeo-refresh.plist` is a LaunchAgent template for Mondays 08:00. The API only looks back 90 days, so this store is the durable memory.
+
 ---
 Growth Automated · Pragmatic AEO · rahul@growthautomated.ai

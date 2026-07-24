@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- TEMPLATE — copy to ~/Library/LaunchAgents/com.growthautomated.aeo-refresh.plist
+     then: launchctl load ~/Library/LaunchAgents/com.growthautomated.aeo-refresh.plist
+     Weekly pull: Mondays 08:00 local. Requires ~/.config/aeo-tracker/config.json. -->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.growthautomated.aeo-refresh</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/bin/python3</string>
+    <string>/Users/rahulsharma/Telus-AnswerEngineOptimization/scripts/refresh_visibility.py</string>
+    <string>--brand</string>
+    <string>telus</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Weekday</key><integer>1</integer>
+    <key>Hour</key><integer>8</integer>
+    <key>Minute</key><integer>0</integer>
+  </dict>
+  <key>StandardOutPath</key><string>/tmp/aeo-refresh.log</string>
+  <key>StandardErrorPath</key><string>/tmp/aeo-refresh.err</string>
+</dict>
+</plist>
