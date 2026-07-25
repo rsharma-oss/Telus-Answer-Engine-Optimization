@@ -1,49 +1,64 @@
 #!/usr/bin/env python3
 """Weekly AI-visibility pull → append one dated record to data/longitudinal/<brand>.jsonl.
 
-Reads config from ~/.config/aeo-tracker/config.json (NEVER committed — keep keys out
-of this public repo). Expected shape:
+Talks JSON-RPC (MCP protocol, stateless streamable-HTTP) to the tracking
+platform's endpoint. Reads config from ~/.config/aeo-tracker/config.json
+(NEVER committed — keep keys out of this public repo). Expected shape:
 
 {
-  "api_base": "https://<tracking-platform-host>/api",
+  "api_base": "https://<tracking-platform-host>/api/mcp",
   "api_key": "<key>",
-  "auth_header": "Authorization",          // or "X-API-Key"
-  "auth_prefix": "Bearer ",                 // "" when using X-API-Key
+  "auth_header": "Authorization",
+  "auth_prefix": "Bearer ",
   "brands": { "telus": "<brand-uuid>" }
 }
-
-NOTE: endpoint paths below mirror the platform's MCP tool semantics
-(get_brand_visibility, get_model_breakdown, list_prompts, list_competitors,
-list_top_sources, get_visibility_timeseries). Verify the exact REST paths once
-against the platform's API docs and adjust ENDPOINTS if they differ — the JSON
-fields consumed here match what the platform returns through MCP.
 
 Usage:
   python3 scripts/refresh_visibility.py --brand telus
   python3 scripts/refresh_visibility.py --brand telus --dry-run
 """
-import argparse, datetime, json, pathlib, sys, urllib.parse, urllib.request
+import argparse, datetime, json, pathlib, ssl, sys, urllib.error, urllib.request
 
 REPO = pathlib.Path(__file__).resolve().parent.parent
 CONFIG_PATH = pathlib.Path.home() / ".config" / "aeo-tracker" / "config.json"
 
-ENDPOINTS = {
-    "visibility": "/visibility?brandId={bid}&timeRange=30d",
-    "models": "/model-breakdown?brandId={bid}&days=30",
-    "prompts": "/prompts?brandId={bid}&days=30",
-    "competitors": "/competitors?brandId={bid}",
-    "sources": "/top-sources?brandId={bid}&days=30&limit=15",
-    "timeseries": "/visibility-timeseries?brandId={bid}&days=30&includeCompetitors=false",
-}
+
+def _context():
+    try:
+        ctx = ssl.create_default_context()
+        ctx.load_default_certs()
+        return ctx
+    except Exception:
+        return ssl.create_default_context(cafile="/etc/ssl/cert.pem")
 
 
-def get(cfg, path):
-    url = cfg["api_base"].rstrip("/") + path
-    req = urllib.request.Request(url)
+def _post(cfg, body, ctx):
+    req = urllib.request.Request(cfg["api_base"], data=body, method="POST")
+    req.add_header("Content-Type", "application/json")
+    req.add_header("Accept", "application/json, text/event-stream")
     req.add_header(cfg.get("auth_header", "Authorization"),
                    cfg.get("auth_prefix", "Bearer ") + cfg["api_key"])
-    with urllib.request.urlopen(req, timeout=60) as r:
-        return json.load(r)
+    with urllib.request.urlopen(req, timeout=90, context=ctx) as r:
+        return r.read().decode()
+
+
+def call_tool(cfg, name, arguments, ctx, _id=[0]):
+    _id[0] += 1
+    body = json.dumps({"jsonrpc": "2.0", "id": _id[0], "method": "tools/call",
+                       "params": {"name": name, "arguments": arguments}}).encode()
+    try:
+        raw = _post(cfg, body, ctx)
+    except urllib.error.URLError as e:
+        if "CERTIFICATE_VERIFY_FAILED" in str(e.reason):
+            raw = _post(cfg, body, ssl.create_default_context(cafile="/etc/ssl/cert.pem"))
+        else:
+            raise
+    if "data:" in raw:  # SSE framing — take the final data payload
+        raw = [l[5:].strip() for l in raw.splitlines() if l.startswith("data:")][-1]
+    res = json.loads(raw)
+    if "error" in res:
+        sys.exit(f"tool {name} failed: {res['error'].get('message')}")
+    return json.loads(res["result"]["content"][0]["text"])
 
 
 def slug(text, limit=40):
@@ -53,13 +68,14 @@ def slug(text, limit=40):
     return s.strip("-")[:limit]
 
 
-def build_record(cfg, brand_id):
-    vis = get(cfg, ENDPOINTS["visibility"].format(bid=brand_id))
-    models = get(cfg, ENDPOINTS["models"].format(bid=brand_id))
-    prompts = get(cfg, ENDPOINTS["prompts"].format(bid=brand_id))
-    comps = get(cfg, ENDPOINTS["competitors"].format(bid=brand_id))
-    sources = get(cfg, ENDPOINTS["sources"].format(bid=brand_id))
-    series = get(cfg, ENDPOINTS["timeseries"].format(bid=brand_id))
+def build_record(cfg, brand_id, ctx):
+    vis = call_tool(cfg, "get_brand_visibility", {"brandId": brand_id, "timeRange": "30d"}, ctx)
+    models = call_tool(cfg, "get_model_breakdown", {"brandId": brand_id, "days": 30}, ctx)
+    prompts = call_tool(cfg, "list_prompts", {"brandId": brand_id, "days": 30}, ctx)
+    comps = call_tool(cfg, "list_competitors", {"brandId": brand_id}, ctx)
+    sources = call_tool(cfg, "list_top_sources", {"brandId": brand_id, "days": 30, "limit": 15}, ctx)
+    series = call_tool(cfg, "get_visibility_timeseries",
+                       {"brandId": brand_id, "days": 30, "includeCompetitors": False}, ctx)
 
     return {
         "date": datetime.date.today().isoformat(),
@@ -114,7 +130,7 @@ def main():
     if not brand_id:
         sys.exit(f"brand '{args.brand}' not in config brands map")
 
-    record = build_record(cfg, brand_id)
+    record = build_record(cfg, brand_id, _context())
     out = REPO / "data" / "longitudinal" / f"{args.brand}.jsonl"
 
     if args.dry_run:
