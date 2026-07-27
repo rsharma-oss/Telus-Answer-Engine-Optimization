@@ -34,7 +34,9 @@ Growth Automated's AEO engagement repo for **Telus**: ongoing AI visibility trac
 - `manual_analysis` — coverage % and avg-score-among-mentions from the dated manual snapshots
 - `api` — the tracking API's visibility score (0–100, share-of-answer weighted), per-model/per-prompt/competitor detail, and day-grain daily scores
 
-**Weekly refresh:** `scripts/refresh_visibility.py --brand telus` appends the current 30-day pull (idempotent per date). It reads `~/.config/aeo-tracker/config.json` (api_base, api_key, brand ids) — the key never enters this repo. `scripts/com.growthautomated.aeo-refresh.plist` is a LaunchAgent template for Mondays 08:00. The API only looks back 90 days, so this store is the durable memory.
+`longitudinal.html` is the living trajectory page built from this store — daily score series, prompt movers, competitive gap, source momentum.
+
+**Weekly refresh:** `scripts/refresh_visibility.py --brand telus` appends the current 30-day pull (idempotent per date), then auto-commits and pushes the new record (non-fatal on failure — the record rides the next push). It reads `~/.config/aeo-tracker/config.json` (api_base, api_key, brand ids) — the key never enters this repo. `scripts/com.growthautomated.aeo-refresh.plist` is a LaunchAgent template for Mondays 08:00. The API only looks back 90 days, so this store is the durable memory.
 
 ---
 Growth Automated · Pragmatic AEO · rahul@growthautomated.ai

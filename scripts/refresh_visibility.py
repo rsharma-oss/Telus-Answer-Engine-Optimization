@@ -17,10 +17,28 @@ Usage:
   python3 scripts/refresh_visibility.py --brand telus
   python3 scripts/refresh_visibility.py --brand telus --dry-run
 """
-import argparse, datetime, json, pathlib, ssl, sys, urllib.error, urllib.request
+import argparse, datetime, json, pathlib, ssl, subprocess, sys, urllib.error, urllib.request
 
 REPO = pathlib.Path(__file__).resolve().parent.parent
 CONFIG_PATH = pathlib.Path.home() / ".config" / "aeo-tracker" / "config.json"
+GIT_AUTHOR = ["-c", "user.name=Rahul Sharma", "-c", "user.email=rahul@growthautomated.ai"]
+
+
+def git_autopush(rel_path, date_str):
+    """Commit + push the appended record. Failure is non-fatal — the record
+    is already on disk; the next successful run (or a work session) pushes it."""
+    try:
+        subprocess.run(["git", "add", rel_path], cwd=REPO, check=True, capture_output=True)
+        diff = subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=REPO)
+        if diff.returncode == 0:
+            return  # nothing staged
+        subprocess.run(["git", *GIT_AUTHOR, "commit", "-m",
+                        f"Longitudinal record {date_str} (automated weekly pull)"],
+                       cwd=REPO, check=True, capture_output=True)
+        subprocess.run(["git", "push"], cwd=REPO, check=True, capture_output=True, timeout=120)
+        print(f"pushed {date_str} record to origin")
+    except Exception as e:
+        print(f"WARNING: auto-push failed ({e}) — record saved locally; will ride the next push", file=sys.stderr)
 
 
 def _context():
@@ -146,6 +164,7 @@ def main():
     with out.open("a") as f:
         f.write(json.dumps(record, separators=(",", ": ")) + "\n")
     print(f"appended {record['date']} → {out}")
+    git_autopush(str(out.relative_to(REPO)), record["date"])
 
 
 if __name__ == "__main__":

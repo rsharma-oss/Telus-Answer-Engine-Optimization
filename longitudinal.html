@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Telus — AI Visibility Trajectory · Growth Automated</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#1A2B4B;--green:#10B981;--mark:#047857;--ctx:#94A3B8;--up:#0F9D58;--down:#C5221F;
+--bg:#F0F4F8;--card:#FFFFFF;--ink:#1A2B4B;--ink2:#4A5E7E;--ink3:#7B9AB8;--border:#DCE5EE;--amber:#B45309}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink)}
+.page{max-width:1080px;margin:0 auto;padding-bottom:64px}
+.hero{background:var(--navy);padding:44px 48px 40px;border-bottom:3px solid var(--green)}
+.hero-eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;color:#7EB3E8;text-transform:uppercase;margin-bottom:10px}
+.hero h1{font-size:34px;font-weight:700;color:#fff;letter-spacing:-.01em}
+.hero h1 em{color:var(--green);font-style:normal}
+.hero-sub{margin-top:10px;font-size:15px;color:#B8CCE0;max-width:70ch;line-height:1.55}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:26px}
+.hstat{background:rgba(255,255,255,.06);border:1px solid rgba(126,179,232,.25);border-radius:10px;padding:12px 16px}
+.hstat .v{font-size:24px;font-weight:700;color:#fff;font-family:'DM Mono',monospace}
+.hstat .v small{font-size:12px;color:#7B9AB8;font-weight:400}
+.hstat .l{font-size:11px;color:#7EB3E8;letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+.hstat .d{font-size:11.5px;margin-top:4px;font-family:'DM Mono',monospace}
+.up{color:var(--up)}.down{color:var(--down)}.flat{color:var(--ink3)}
+.hero .up{color:#4ADE80}.hero .down{color:#F87171}.hero .flat{color:#7B9AB8}
+.section{padding:34px 48px 0}
+.sec-title{font-size:19px;font-weight:700;margin-bottom:4px}
+.sec-sub{font-size:13px;color:var(--ink2);margin-bottom:16px;max-width:80ch;line-height:1.5}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px}
+.chart-wrap{position:relative}
+.tooltip{position:absolute;pointer-events:none;background:var(--navy);color:#fff;font-family:'DM Mono',monospace;font-size:12px;padding:6px 9px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-115%);display:none;z-index:5}
+.movers{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mover-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
+.mover-h{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+.mrow{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--border);font-size:13.5px}
+.mrow:first-of-type{border-top:none}
+.mname{flex:1;color:var(--ink);line-height:1.3}
+.mvals{font-family:'DM Mono',monospace;font-size:12.5px;color:var(--ink3);white-space:nowrap}
+.mdelta{font-family:'DM Mono',monospace;font-size:12.5px;font-weight:500;white-space:nowrap;min-width:44px;text-align:right}
+.bars .brow{display:grid;grid-template-columns:110px 1fr 46px;align-items:center;gap:12px;padding:7px 0}
+.bname{font-size:13.5px;text-align:right;color:var(--ink2)}
+.bname strong{color:var(--ink)}
+.btrack{position:relative;height:22px;background:#E9EFF5;border-radius:4px}
+.bfill{position:absolute;left:0;top:0;bottom:0;border-radius:4px 4px 4px 4px;background:var(--ctx)}
+.bfill.you{background:var(--mark)}
+.btick{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--navy);opacity:.65}
+.bval{font-family:'DM Mono',monospace;font-size:13px;color:var(--ink)}
+.legend{display:flex;gap:18px;font-size:12px;color:var(--ink2);margin-top:10px;align-items:center}
+.legend .sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-2px}
+.srcgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.src{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.src .d{font-size:12px;color:var(--ink2);font-family:'DM Mono',monospace}
+.src .v{font-size:21px;font-weight:700;font-family:'DM Mono',monospace;margin-top:2px}
+.src .c{font-size:11.5px;margin-top:2px;font-family:'DM Mono',monospace}
+.arc{border:1px solid #F3E3C8;background:#FDF9F0;border-radius:12px;padding:18px 20px}
+.arc-badge{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);border:1px solid #ECD9B0;background:#FBF3DF;padding:3px 8px;border-radius:20px;margin-bottom:10px}
+.arc-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.astep{background:#fff;border:1px solid #F0E4CC;border-radius:9px;padding:10px 12px}
+.astep .ad{font-size:11px;color:var(--amber);font-family:'DM Mono',monospace;font-weight:500}
+.astep .am{font-size:16px;font-weight:700;font-family:'DM Mono',monospace;margin-top:2px}
+.astep .an{font-size:11px;color:var(--ink2);margin-top:1px}
+details{margin-top:14px}
+summary{font-size:12.5px;color:var(--ink2);cursor:pointer;font-weight:600}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12.5px}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);padding:6px 8px;border-bottom:1.5px solid var(--border)}
+td{padding:6px 8px;border-bottom:1px solid var(--border)}
+td.num{font-family:'DM Mono',monospace;text-align:right}
+.footer{padding:30px 48px 0;font-size:12px;color:var(--ink3);display:flex;justify-content:space-between}
+@media(max-width:760px){.hero-stats,.srcgrid{grid-template-columns:repeat(2,1fr)}.movers{grid-template-columns:1fr}.arc-steps{grid-template-columns:repeat(2,1fr)}.section,.hero{padding-left:20px;padding-right:20px}}
+</style></head><body>
+<div class="page">
+
+<div class="hero">
+  <div class="hero-eyebrow">Growth Automated · Pragmatic AEO · Longitudinal View</div>
+  <h1>Telus — <em>AI Visibility Trajectory</em></h1>
+  <div class="hero-sub">Week-over-week movement across 5 AI models and 20 ICP queries, from the append-only tracking store. Seven checkpoints since June 26 · latest pull July 25, 2026 (automated).</div>
+  <div class="hero-stats">
+    <div class="hstat"><div class="v">71<small>/100</small></div><div class="l">Visibility · Jul 25</div><div class="d flat">— flat vs Jul 17</div></div>
+    <div class="hstat"><div class="v">2,657</div><div class="l">Model runs · 30d</div><div class="d up">▲ +696 vs Jul 17 window</div></div>
+    <div class="hstat"><div class="v">28,524</div><div class="l">Category citations · 30d</div><div class="d up">▲ +38% vs Jul 17 window</div></div>
+    <div class="hstat"><div class="v">14 / 20</div><div class="l">Prompts climbing</div><div class="d down">▼ 5 slipping · 1 flat</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-title">Daily visibility score — API series, June 26 → July 25</div>
+  <div class="sec-sub">Share-of-answer-weighted score (0–100) across all five models. The mid-July dip (65 on Jul 14 &amp; 16) has recovered to a steady low-70s band. Hover for exact values.</div>
+  <div class="card chart-wrap">
+    <svg id="lc" viewBox="0 0 940 250" width="100%" role="img" aria-label="Daily visibility score line chart, June 26 to July 25, range 65 to 79"></svg>
+    <div class="tooltip" id="tt"></div>
+    <details><summary>Data table — daily scores</summary><table id="dtab"><thead><tr><th>Date</th><th style="text-align:right">Score</th></tr></thead><tbody></tbody></table></details>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-title">Prompt movers — July 17 → July 25 pull</div>
+  <div class="sec-sub">The headline held at 71, but it's churning underneath: reputation prompts surged toward the high 90s while two commercial-intent gaps closed slightly and the reliability narrative slipped.</div>
+  <div class="movers">
+    <div class="mover-card"><div class="mover-h up">▲ Climbing</div><div id="climb"></div></div>
+    <div class="mover-card"><div class="mover-h down">▼ Slipping</div><div id="slip"></div></div>
+  </div>
+  <details><summary>Full table — all 20 tracked prompts</summary><table id="ptab"><thead><tr><th>Prompt</th><th style="text-align:right">Jul 17</th><th style="text-align:right">Jul 25</th><th style="text-align:right">Δ</th></tr></thead><tbody></tbody></table></details>
+</div>
+
+<div class="section">
+  <div class="sec-title">Competitive gap — visibility scores</div>
+  <div class="sec-sub">Telus holds a ~2:1 lead over Bell, and the gap widened this week: Bell eased 39 → 36 while Telus held.</div>
+  <div class="card bars" id="bars"></div>
+</div>
+
+<div class="section">
+  <div class="sec-title">Source momentum — 30-day citation counts</div>
+  <div class="sec-sub">Reddit is pulling further ahead as the dominant influence source; owned properties grew a combined +901 citations week over week.</div>
+  <div class="srcgrid">
+    <div class="src"><div class="d">reddit.com · influence 85</div><div class="v">3,594</div><div class="c up">▲ +1,145 vs Jul 17</div></div>
+    <div class="src"><div class="d">telus.com + forum</div><div class="v">3,168</div><div class="c up">▲ +901 vs Jul 17</div></div>
+    <div class="src"><div class="d">whistleout.ca</div><div class="v">1,948</div><div class="c up">▲ +588 vs Jul 17</div></div>
+    <div class="src"><div class="d">All sources · 1,385 domains</div><div class="v">28,524</div><div class="c up">▲ +7,928 vs Jul 17</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-title">Engagement arc — June manual snapshots</div>
+  <div class="sec-sub"></div>
+  <div class="arc">
+    <span class="arc-badge">Different methodology — not comparable to API scores above</span>
+    <div style="font-size:12.5px;color:var(--ink2);margin-bottom:12px;line-height:1.5">These five checkpoints come from the dated manual snapshot analyses (prompt coverage % · average score <em>among mentions</em>). They chart the June arc that preceded API tracking: coverage locked at 100% by June 28 and citation volume tripled by July 3.</div>
+    <div class="arc-steps">
+      <div class="astep"><div class="ad">Jun 27</div><div class="am">95% · 83</div><div class="an">1,914 citations</div></div>
+      <div class="astep"><div class="ad">Jun 28</div><div class="am">100% · 87</div><div class="an">241 runs</div></div>
+      <div class="astep"><div class="ad">Jun 29</div><div class="am">100% · 87</div><div class="an">2,823 citations</div></div>
+      <div class="astep"><div class="ad">Jul 3</div><div class="am">100% · 85</div><div class="an">6,331 citations</div></div>
+      <div class="astep"><div class="ad">Jul 13</div><div class="am">100% · 85</div><div class="an">coverage held</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div><strong>Pragmatic AEO</strong> · Growth Automated · growthautomated.ai</div>
+  <div>Store: data/longitudinal/telus.jsonl · automated weekly pull, Mondays 08:00</div>
+</div>
+
+</div>
+<script>
+const DAILY = [["2026-06-26",77],["2026-06-27",78],["2026-06-28",74],["2026-06-29",79],["2026-06-30",75],["2026-07-01",66],["2026-07-02",72],["2026-07-04",78],["2026-07-05",77],["2026-07-06",74],["2026-07-07",74],["2026-07-08",67],["2026-07-09",73],["2026-07-10",72],["2026-07-11",71],["2026-07-12",69],["2026-07-13",74],["2026-07-14",65],["2026-07-15",68],["2026-07-16",65],["2026-07-17",76],["2026-07-18",74],["2026-07-19",73],["2026-07-20",72],["2026-07-21",71],["2026-07-22",71],["2026-07-23",73],["2026-07-25",74]];
+const PROMPTS = [
+ ["Business owners on Telus for telecom",85,97],
+ ["Flexible monthly-adjustable data plans",2,14],
+ ["Best family unlimited data plans",58,69],
+ ["Families finding plans too expensive",38,48],
+ ["General satisfaction among Telus users",90,98],
+ ["Unexpected fees with Telus mobile",90,98],
+ ["Disappointed with Telus home internet",90,98],
+ ["5G speed vs Bell / Rogers",85,93],
+ ["Best value among Canadian telcos",90,97],
+ ["Wish they'd chosen a different provider",90,97],
+ ["Switching to Telus from Rogers",95,99],
+ ["Positive customer-service experiences",95,98],
+ ["Bundle deal: phone + fiber",52,55],
+ ["Bell vs other providers' 5G",53,56],
+ ["Urban vs rural service quality",66,66],
+ ["Rural reliability",100,99],
+ ["Home-office wireline",6,4],
+ ["SMB wireless with unlimited data",36,32],
+ ["Newcomer family plan",76,66],
+ ["Reliability / tired of outages",77,65]];
+const COMPS = [["Telus (you)",71,71,true],["Bell",36,39],["Rogers",31,31],["Freedom",9,11],["Vidéotron",2,2],["Cogeco",1,0]];
+
+// line chart
+(function(){
+const svg=document.getElementById('lc');const M={l:44,r:16,t:14,b:30},W=940,H=250,pw=W-M.l-M.r,ph=H-M.t-M.b;
+const t0=new Date("2026-06-26").getTime(),t1=new Date("2026-07-25").getTime();
+const X=d=>M.l+(new Date(d).getTime()-t0)/(t1-t0)*pw;
+const Y=v=>M.t+(100-v)/(100-40)*ph;
+let g='';
+[40,60,80,100].forEach(v=>{g+=`<line x1="${M.l}" y1="${Y(v)}" x2="${W-M.r}" y2="${Y(v)}" stroke="#E4EBF2"/><text x="${M.l-8}" y="${Y(v)+4}" text-anchor="end" font-size="11" font-family="DM Mono" fill="#7B9AB8">${v}</text>`;});
+["2026-06-26","2026-07-01","2026-07-08","2026-07-15","2026-07-22"].forEach(d=>{const lbl=new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'});g+=`<text x="${X(d)}" y="${H-8}" text-anchor="middle" font-size="11" font-family="DM Mono" fill="#7B9AB8">${lbl}</text>`;});
+const pts=DAILY.map(([d,v])=>[X(d),Y(v)]);
+const path=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+g+=`<path d="${path} L ${pts[pts.length-1][0]} ${Y(40)} L ${pts[0][0]} ${Y(40)} Z" fill="#047857" opacity="0.07"/>`;
+g+=`<path d="${path}" fill="none" stroke="#047857" stroke-width="2" stroke-linejoin="round"/>`;
+// selective labels: peak, low, last
+[["2026-06-29",79,-10],["2026-07-14",65,18],["2026-07-25",74,-10]].forEach(([d,v,dy])=>{
+ g+=`<circle cx="${X(d)}" cy="${Y(v)}" r="4" fill="#047857" stroke="#fff" stroke-width="2"/><text x="${X(d)}" y="${Y(v)+dy}" text-anchor="middle" font-size="11.5" font-weight="600" font-family="DM Mono" fill="#1A2B4B">${v}</text>`;});
+g+=`<rect id="hov" x="${M.l}" y="${M.t}" width="${pw}" height="${ph}" fill="transparent"/>`;
+g+=`<line id="ch" y1="${M.t}" y2="${M.t+ph}" stroke="#1A2B4B" stroke-width="1" stroke-dasharray="3 3" style="display:none"/>`;
+g+=`<circle id="chd" r="4.5" fill="#047857" stroke="#fff" stroke-width="2" style="display:none"/>`;
+svg.innerHTML=g;
+const tt=document.getElementById('tt'),ch=svg.querySelector('#ch'),chd=svg.querySelector('#chd');
+svg.querySelector('#hov').addEventListener('mousemove',e=>{
+ const r=svg.getBoundingClientRect(),sx=(e.clientX-r.left)*(W/r.width);
+ let best=0,bd=1e9;DAILY.forEach((p,i)=>{const d=Math.abs(X(p[0])-sx);if(d<bd){bd=d;best=i;}});
+ const [d,v]=DAILY[best],x=X(d),y=Y(v);
+ ch.setAttribute('x1',x);ch.setAttribute('x2',x);ch.style.display='block';
+ chd.setAttribute('cx',x);chd.setAttribute('cy',y);chd.style.display='block';
+ tt.style.display='block';tt.style.left=(x/W*100)+'%';tt.style.top=(y/H*100)+'%';
+ tt.textContent=new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'})+' · '+v;
+});
+svg.addEventListener('mouseleave',()=>{tt.style.display='none';ch.style.display='none';chd.style.display='none';});
+const tb=document.querySelector('#dtab tbody');
+DAILY.forEach(([d,v])=>{tb.insertAdjacentHTML('beforeend',`<tr><td>${d}</td><td class="num">${v}</td></tr>`);});
+})();
+
+// movers
+(function(){
+const withD=PROMPTS.map(([n,a,b])=>[n,a,b,b-a]).sort((x,y)=>y[3]-x[3]);
+const row=([n,a,b,d])=>{const cls=d>0?'up':(d<0?'down':'flat');const sign=d>0?'▲ +':(d<0?'▼ ':'— ');
+ return `<div class="mrow"><div class="mname">${n}</div><div class="mvals">${a} → ${b}</div><div class="mdelta ${cls}">${sign}${Math.abs(d)||''}${d===0?'0':''}</div></div>`;};
+document.getElementById('climb').innerHTML=withD.slice(0,5).map(row).join('');
+document.getElementById('slip').innerHTML=withD.slice(-5).reverse().map(row).join('');
+const tb=document.querySelector('#ptab tbody');
+withD.forEach(([n,a,b,d])=>{const cls=d>0?'up':(d<0?'down':'flat');
+ tb.insertAdjacentHTML('beforeend',`<tr><td>${n}</td><td class="num">${a}</td><td class="num">${b}</td><td class="num ${cls}">${d>0?'+':''}${d}</td></tr>`);});
+})();
+
+// competitor bars
+(function(){
+const el=document.getElementById('bars');
+el.innerHTML=COMPS.map(([n,now,prev,you])=>`
+ <div class="brow"><div class="bname">${you?'<strong>'+n+'</strong>':n}</div>
+ <div class="btrack" title="${n}: ${now} now · ${prev} on Jul 17"><div class="bfill${you?' you':''}" style="width:${now}%"></div><div class="btick" style="left:${prev}%"></div></div>
+ <div class="bval">${now}</div></div>`).join('')
+ +`<div class="legend"><span><span class="sw" style="background:#047857"></span>Telus · Jul 25</span><span><span class="sw" style="background:#94A3B8"></span>Competitors · Jul 25</span><span><span style="display:inline-block;width:2px;height:12px;background:#1A2B4B;opacity:.65;margin-right:6px;vertical-align:-2px"></span>Jul 17 reference</span></div>`;
+})();
+</script>
+</body></html>
