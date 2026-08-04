@@ -42,12 +42,16 @@ def git_autopush(rel_path, date_str):
 
 
 def _context():
+    """Pick a context that actually has CAs loaded. The python.org build ships an
+    empty trust store; the system /etc/ssl/cert.pem bundle is the reliable one."""
     try:
         ctx = ssl.create_default_context()
         ctx.load_default_certs()
-        return ctx
+        if ctx.cert_store_stats().get("x509_ca", 0) > 0:
+            return ctx
     except Exception:
-        return ssl.create_default_context(cafile="/etc/ssl/cert.pem")
+        pass
+    return ssl.create_default_context(cafile="/etc/ssl/cert.pem")
 
 
 def _post(cfg, body, ctx):
@@ -61,15 +65,27 @@ def _post(cfg, body, ctx):
 
 
 def call_tool(cfg, name, arguments, ctx, _id=[0]):
+    """Rate limit is 20 calls/min; the API answers 401/429 when throttled.
+    Retry across the window boundary rather than dying mid-pull."""
+    import time as _t
     _id[0] += 1
     body = json.dumps({"jsonrpc": "2.0", "id": _id[0], "method": "tools/call",
                        "params": {"name": name, "arguments": arguments}}).encode()
-    try:
-        raw = _post(cfg, body, ctx)
-    except urllib.error.URLError as e:
-        if "CERTIFICATE_VERIFY_FAILED" in str(e.reason):
-            raw = _post(cfg, body, ssl.create_default_context(cafile="/etc/ssl/cert.pem"))
-        else:
+    raw = None
+    for attempt in range(3):
+        try:
+            raw = _post(cfg, body, ctx)
+            break
+        except urllib.error.HTTPError as e:
+            if e.code in (401, 429) and attempt < 2:
+                print(f"throttled ({e.code}) on {name} — waiting for rate window", file=sys.stderr)
+                _t.sleep(65)
+                continue
+            raise
+        except urllib.error.URLError as e:
+            if "CERTIFICATE_VERIFY_FAILED" in str(e.reason) and attempt < 2:
+                ctx = ssl.create_default_context(cafile="/etc/ssl/cert.pem")
+                continue
             raise
     if "data:" in raw:  # SSE framing — take the final data payload
         raw = [l[5:].strip() for l in raw.splitlines() if l.startswith("data:")][-1]
@@ -84,6 +100,62 @@ def slug(text, limit=40):
     while "--" in s:
         s = s.replace("--", "-")
     return s.strip("-")[:limit]
+
+
+
+
+MODEL_ORDER = ["gpt-4o-mini", "gemini-2.5-flash", "sonar", "google-aio", "google-ai-mode"]
+
+
+def pull_matrix(cfg, brand_id, ctx):
+    """Per-prompt per-model detail, 7-day window. ~21 calls, paced under 20/min."""
+    import time as _t
+    plist = call_tool(cfg, "list_prompts", {"brandId": brand_id, "days": 7}, ctx)
+    details = []
+    for p in plist.get("prompts", []):
+        details.append(call_tool(cfg, "get_prompt_detail",
+                                 {"brandId": brand_id, "promptId": p["promptId"], "days": 7}, ctx))
+        _t.sleep(4.0)
+    return details
+
+
+def matrix_record(details):
+    out = {}
+    for d in details:
+        by = {m["model"]: (m["score"] if m["totalRuns"] else None) for m in d["models"]}
+        o = d["overall"]
+        out[slug(d["text"])] = {"overall": o["score"] if o["totalRuns"] else None,
+                                "runs": o["totalRuns"],
+                                "models": {m: by.get(m) for m in MODEL_ORDER}}
+    return out
+
+
+def _cell(v):
+    if v is None:
+        return '<td style="text-align:center;color:#9AA7B8">&middot;</td>'
+    c = "#0F9D58" if v >= 70 else ("#B45309" if v >= 40 else ("#C5221F" if v > 0 else "#8A94A3"))
+    return f'<td style="text-align:center;font-family:monospace;font-weight:600;color:{c}">{v}</td>'
+
+
+def matrix_rows_html(details):
+    import html as _h
+    rows = []
+    for d in sorted(details, key=lambda x: -((x["overall"]["score"] or 0) if x["overall"]["totalRuns"] else -1)):
+        t = _h.escape(d["text"][:72] + ("…" if len(d["text"]) > 72 else ""))
+        by = {m["model"]: (m["score"] if m["totalRuns"] else None) for m in d["models"]}
+        o = d["overall"]
+        cells = "".join(_cell(by.get(m)) for m in MODEL_ORDER)
+        overall = _cell(o["score"] if o["totalRuns"] else None)
+        rows.append('<tr style="border-top:1px solid rgba(0,0,0,.07)"><td style="padding:5px 8px;line-height:1.3;font-size:12.5px">' + t + '</td>' + cells + overall + '</tr>')
+    return "".join(rows)
+
+
+def splice(path, start_marker, end_marker, content):
+    p = pathlib.Path(path)
+    src = p.read_text()
+    a = src.index(start_marker) + len(start_marker)
+    b = src.index(end_marker)
+    p.write_text(src[:a] + content + src[b:])
 
 
 def build_record(cfg, brand_id, ctx):
@@ -148,7 +220,10 @@ def main():
     if not brand_id:
         sys.exit(f"brand '{args.brand}' not in config brands map")
 
-    record = build_record(cfg, brand_id, _context())
+    ctx = _context()
+    record = build_record(cfg, brand_id, ctx)
+    details = pull_matrix(cfg, brand_id, ctx)
+    record["api"]["prompt_matrix_7d"] = matrix_record(details)
     out = REPO / "data" / "longitudinal" / f"{args.brand}.jsonl"
 
     if args.dry_run:
@@ -164,6 +239,19 @@ def main():
     with out.open("a") as f:
         f.write(json.dumps(record, separators=(",", ": ")) + "\n")
     print(f"appended {record['date']} → {out}")
+    # regenerate report band + matrix between markers
+    report = REPO / "full-report.html"
+    vis7 = call_tool(cfg, "get_brand_visibility", {"brandId": brand_id, "timeRange": "7d"}, ctx)
+    title = ('<div class="cc-title">API Snapshot &middot; Visibility Score ' + str(vis7["visibilityScore"]) + '/100 (7d)</div>'
+             '<div class="cc-sub">7-day window ended ' + record["date"] + ' &middot; ' + str(vis7["runCount"]) + ' runs &middot; visibilityScore methodology</div>')
+    splice(report, "<!-- BANDTITLE:START -->", "<!-- BANDTITLE:END -->", title)
+    table = ('<div style="margin-top:14px;border-top:1px solid rgba(0,0,0,.08);padding-top:12px">'
+             '<div class="cc-sub" style="margin-bottom:8px"><strong>Prompt &times; model matrix</strong> &middot; visibility score per surface, 7-day window ended ' + record["date"] + ' &middot; &ldquo;&middot;&rdquo; = no runs in window</div>'
+             '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
+             '<thead><tr style="text-align:center"><th style="text-align:left;padding:5px 8px">Prompt</th><th>ChatGPT</th><th>Gemini</th><th>Perplexity</th><th>AIO</th><th>AI Mode</th><th>Overall</th></tr></thead>'
+             '<tbody>' + matrix_rows_html(details) + '</tbody></table></div></div>')
+    splice(report, "<!-- MATRIX:START -->", "<!-- MATRIX:END -->", table)
+    git_autopush("full-report.html", record["date"] + " report")
     git_autopush(str(out.relative_to(REPO)), record["date"])
 
 
