@@ -251,7 +251,15 @@ def main():
              '<thead><tr style="text-align:center"><th style="text-align:left;padding:5px 8px">Prompt</th><th>ChatGPT</th><th>Gemini</th><th>Perplexity</th><th>AIO</th><th>AI Mode</th><th>Overall</th></tr></thead>'
              '<tbody>' + matrix_rows_html(details) + '</tbody></table></div></div>')
     splice(report, "<!-- MATRIX:START -->", "<!-- MATRIX:END -->", table)
+    # rebuild the trajectory page from the (now updated) store
+    try:
+        subprocess.run([sys.executable, str(REPO / "scripts" / "build_trajectory.py")],
+                       cwd=REPO, check=True, capture_output=True, timeout=120)
+        print("rebuilt longitudinal.html")
+    except Exception as e:
+        print(f"WARNING: trajectory rebuild failed ({e}) — page left at prior version", file=sys.stderr)
     git_autopush("full-report.html", record["date"] + " report")
+    git_autopush("longitudinal.html", record["date"] + " trajectory")
     git_autopush(str(out.relative_to(REPO)), record["date"])
 
 
