@@ -252,14 +252,19 @@ def main():
              '<tbody>' + matrix_rows_html(details) + '</tbody></table></div></div>')
     splice(report, "<!-- MATRIX:START -->", "<!-- MATRIX:END -->", table)
     # rebuild the trajectory page from the (now updated) store
-    try:
-        subprocess.run([sys.executable, str(REPO / "scripts" / "build_trajectory.py")],
-                       cwd=REPO, check=True, capture_output=True, timeout=120)
-        print("rebuilt longitudinal.html")
-    except Exception as e:
-        print(f"WARNING: trajectory rebuild failed ({e}) — page left at prior version", file=sys.stderr)
+    for builder, page in (("build_trajectory.py", "longitudinal.html"),
+                          ("build_index.py", "index.html"),
+                          ("build_scorecard.py", "scorecard.html")):
+        try:
+            subprocess.run([sys.executable, str(REPO / "scripts" / builder)],
+                           cwd=REPO, check=True, capture_output=True, timeout=120)
+            print(f"rebuilt {page}")
+        except Exception as e:
+            print(f"WARNING: {page} rebuild failed ({e}) — page left at prior version", file=sys.stderr)
     git_autopush("full-report.html", record["date"] + " report")
     git_autopush("longitudinal.html", record["date"] + " trajectory")
+    git_autopush("index.html", record["date"] + " index")
+    git_autopush("scorecard.html", record["date"] + " scorecard")
     git_autopush(str(out.relative_to(REPO)), record["date"])
 
 
