@@ -17,7 +17,7 @@ Usage:
   python3 scripts/refresh_visibility.py --brand telus
   python3 scripts/refresh_visibility.py --brand telus --dry-run
 """
-import argparse, datetime, json, pathlib, ssl, subprocess, sys, urllib.error, urllib.request
+import argparse, datetime, json, pathlib, re, ssl, subprocess, sys, urllib.error, urllib.request
 
 REPO = pathlib.Path(__file__).resolve().parent.parent
 CONFIG_PATH = pathlib.Path.home() / ".config" / "aeo-tracker" / "config.json"
@@ -158,6 +158,54 @@ def splice(path, start_marker, end_marker, content):
     p.write_text(src[:a] + content + src[b:])
 
 
+# The measurement vendor's name must never appear in published client files.
+# The upstream report generator reintroduces it (a JS fallback domain), so every
+# run scrubs before commit and then verifies nothing slipped through.
+# Pattern is written character-class style so this script does not itself contain
+# the literal vendor name (scripts/ ships in the public repo).
+_VENDOR = r"(?i)p[ea]{2}kaboo"
+SCRUB_RULES = [
+    (re.compile(r"(?i)ai" + r"p[ea]{2}kaboo" + r"\.com"), "telus.com"),
+    (re.compile(_VENDOR), "visibility-tracker"),
+]
+SCRUB_GLOBS = ("*.html", "*.md", "archive/*.html", "data/*.md")
+
+
+def scrub_vendor_name():
+    """Strip the vendor tool name from every publishable file. Returns files changed."""
+    changed = []
+    for pattern in SCRUB_GLOBS:
+        for f in REPO.glob(pattern):
+            try:
+                src = f.read_text()
+            except (UnicodeDecodeError, OSError):
+                continue
+            out = src
+            for rx, repl in SCRUB_RULES:
+                out = rx.sub(repl, out)
+            if out != src:
+                f.write_text(out)
+                changed.append(f.relative_to(REPO).as_posix())
+    for rel in changed:
+        print(f"scrubbed vendor name from {rel}")
+    return changed
+
+
+def verify_scrub():
+    """Fail loudly rather than publish the vendor name."""
+    hits = []
+    for pattern in SCRUB_GLOBS:
+        for f in REPO.glob(pattern):
+            try:
+                if re.search(_VENDOR, f.read_text()):
+                    hits.append(f.relative_to(REPO).as_posix())
+            except (UnicodeDecodeError, OSError):
+                continue
+    if hits:
+        print(f"ERROR: vendor name still present in {hits} — not pushing", file=sys.stderr)
+    return not hits
+
+
 def build_record(cfg, brand_id, ctx):
     vis = call_tool(cfg, "get_brand_visibility", {"brandId": brand_id, "timeRange": "30d"}, ctx)
     models = call_tool(cfg, "get_model_breakdown", {"brandId": brand_id, "days": 30}, ctx)
@@ -261,6 +309,9 @@ def main():
             print(f"rebuilt {page}")
         except Exception as e:
             print(f"WARNING: {page} rebuild failed ({e}) — page left at prior version", file=sys.stderr)
+    scrubbed = scrub_vendor_name()
+    if not verify_scrub():
+        sys.exit("aborting before push: vendor name present in publishable files")
     git_autopush("full-report.html", record["date"] + " report")
     git_autopush("longitudinal.html", record["date"] + " trajectory")
     git_autopush("index.html", record["date"] + " index")
