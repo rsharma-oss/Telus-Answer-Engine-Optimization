@@ -192,16 +192,36 @@ def build():
         f'    </div>'
     )
 
-    # ---- trajectory strip (replaces the June journey) ------------------
-    steps = "".join(
-        f'<div class="growth-step">\n'
-        f'      <div class="gs-date">{short(r["date"])}</div>\n'
-        f'      <div class="gs-metric">{r["api"]["visibility_score"]}<span style="font-size:13px;color:#6B8299">/100</span></div>\n'
-        f'      <div class="gs-note">{r["api"]["runs"]:,} runs · Bell {r["api"]["competitors"].get("Bell","–")} · Rogers {r["api"]["competitors"].get("Rogers","–")}</div>\n'
-        f'    </div>' for r in api)
-    journey = (f'<div class="section" style="margin-top:28px">\n'
-               f'  <div class="section-title">Trajectory · {len(api)} pulls · {short(first["date"])} → {short(d)}</div>\n'
-               f'  <div class="growth-strip">{steps}</div>\n</div>\n\n')
+    # ---- trajectory table (scales to any number of pulls) -------------
+    def arrow(cur, prev):
+        if prev is None:
+            return '<span style="color:#A0B4C8">—</span>'
+        dd = cur - prev
+        if dd == 0:
+            return '<span style="color:#A0B4C8">0</span>'
+        col = "#10B981" if dd > 0 else "#EF4444"
+        return f'<span style="color:{col}">{dd:+d}</span>'
+
+    trows = []
+    prev = None
+    for r in api:
+        ra = r["api"]
+        sc = ra["visibility_score"]
+        trows.append(
+            f'<tr><td style="padding-left:14px;font-family:\'DM Mono\',monospace">{pretty(r["date"])}</td>'
+            f'<td class="r" style="font-family:\'DM Mono\',monospace;font-weight:600;color:#0B1F3B">{sc}</td>'
+            f'<td class="r" style="font-family:\'DM Mono\',monospace">{arrow(sc, prev)}</td>'
+            f'<td class="r" style="font-family:\'DM Mono\',monospace;color:#6B8299">{ra["runs"]:,}</td>'
+            f'<td class="r" style="font-family:\'DM Mono\',monospace;color:#6B8299">{ra["competitors"].get("Bell","–")}</td>'
+            f'<td class="r" style="font-family:\'DM Mono\',monospace;color:#6B8299">{ra["competitors"].get("Rogers","–")}</td></tr>')
+        prev = sc
+    journey = (
+        f'<div class="section" style="margin-top:28px">\n'
+        f'  <div class="section-title">Trajectory · every pull since tracking began</div>\n'
+        f'  <table class="prompt-table"><thead><tr>'
+        f'<th style="padding-left:14px">Pull date</th><th class="r">Telus</th><th class="r">Δ</th>'
+        f'<th class="r">Runs (30d)</th><th class="r">Bell</th><th class="r">Rogers</th>'
+        f'</tr></thead><tbody>{"".join(trows)}</tbody></table>\n</div>\n\n')
 
     # ---- current-state stats ------------------------------------------
     live = [v for v in a["prompts"].values() if v is not None]
@@ -267,7 +287,7 @@ def build():
         + "".join(row(k, v) for k, v in scored[-5:]) + '</tbody></table>\n</div>\n\n')
 
     # ---- cited sources -------------------------------------------------
-    srcs = a["top_sources"][:10]
+    srcs = sorted(a["top_sources"], key=lambda x: -x["citations"])[:10]
     top_c = max(s["citations"] for s in srcs)
     own = ("telus.com", "forum.telus.com")
     rows = "".join(
@@ -297,10 +317,33 @@ def build():
         f'      <div class="comp-score-row"><div class="comp-score-num" style="color:{COLORS[i % len(COLORS)]}">{v}</div>'
         f'<div class="comp-score-label">visibility score / 100</div></div>\n    </div>'
         for i, (n, v) in enumerate(ring))
+    # ---- competitor callout (was hand-written and went stale) ----------
+    lead = ring[0]
+    ratio = score / lead[1] if lead[1] else None
+    trailing = ", ".join(f"{n} ({v})" for n, v in ring[1:4])
+    comp_insight = (
+        f'<div class="insight"><div class="insight-icon">🏁</div><div class="insight-text">'
+        f'<strong>Telus at {score} leads the tracked set</strong>'
+        + (f' — roughly {ratio:.1f}× the nearest rival, {lead[0]} ({lead[1]}).' if ratio and ratio >= 1.1
+           else f', narrowly ahead of {lead[0]} ({lead[1]}).' if ratio and ratio >= 1
+           else f', now behind {lead[0]} ({lead[1]}).')
+        + f' Behind them: {trailing}. Scores are share-of-answer weighted over the 30 days to {pretty(d)}.'
+        f'</div></div>')
+
+    # ---- page stamps ---------------------------------------------------
+    win_start = daily[0][0] if daily else d
+    window_label = f'{short(win_start)} → {short(d)}'
+    title = f'<title>Telus · AI Visibility Scorecard · {pretty(d)}</title>'
+
     s = splice(s, "COMPS", f'<div class="section-title">Competitor Visibility Scores · 30d · Telus: {score}</div>\n'
-                           f'  <div class="comp-grid">{cards}</div>')
+                           f'  <div class="comp-grid">{cards}</div>\n  {comp_insight}')
     s = splice(s, "ACTIONS", build_actions(a, d))
-    s = splice(s, "FOOT", f"Compiled {pretty(d)}")
+    today = datetime.date.today()
+    foot = (f"Data through {pretty(d)}" +
+            ("" if today.isoformat() == d else f" · page rebuilt {today.strftime('%B %-d, %Y')}"))
+    s = splice(s, "FOOT", foot)
+    s = splice(s, "TITLE", title)
+    s = splice(s, "WINDOW", window_label)
     PAGE.write_text(s)
     print(f"rebuilt scorecard.html → {d}")
 
