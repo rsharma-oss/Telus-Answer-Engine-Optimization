@@ -302,7 +302,8 @@ def main():
     # rebuild the trajectory page from the (now updated) store
     for builder, page in (("build_trajectory.py", "longitudinal.html"),
                           ("build_index.py", "index.html"),
-                          ("build_scorecard.py", "scorecard.html")):
+                          ("build_scorecard.py", "scorecard.html"),
+                          ("apply_shell.py", "shared shell — floating nav + GA credit")):
         try:
             subprocess.run([sys.executable, str(REPO / "scripts" / builder)],
                            cwd=REPO, check=True, capture_output=True, timeout=120)
