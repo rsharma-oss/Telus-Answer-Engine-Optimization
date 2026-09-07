@@ -1,42 +1,85 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Telus — Answer Engine Optimization · Growth Automated</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:#F0F4F8;color:#1A2B4B;min-height:100vh}
 .page{max-width:1120px;margin:0 auto;padding:0 0 60px}
-.header{background:#1A2B4B;padding:18px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.header{background:#334FB4;padding:18px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
 .header-brand{font-size:13px;font-weight:600;color:#7EB3E8;letter-spacing:.12em;text-transform:uppercase}
 .header-date{font-size:12px;color:#7B9AB8;font-family:'DM Mono',monospace}
-.hero{background:#1A2B4B;padding:48px 48px 44px;position:relative;overflow:hidden;border-bottom:3px solid #10B981}
-.hero::after{content:'';position:absolute;right:-80px;top:-100px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.10) 0%,transparent 70%)}
-.hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:14px}
-.hero-headline{font-size:30px;font-weight:700;color:#fff;line-height:1.22;margin-bottom:14px;max-width:640px}
-.hero-headline em{font-style:normal;color:#10B981}
+.hero{background:#334FB4;padding:56px 48px 48px;position:relative;overflow:hidden;border-bottom:3px solid #2D9C56}
+.hero::after{content:'';position:absolute;right:-80px;top:-100px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(45,156,86,.16) 0%,transparent 70%)}
+.hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.72);margin-bottom:16px;display:flex;align-items:center;gap:10px} .hero-eyebrow .divider{display:inline-block;width:1px;height:11px;background:rgba(255,255,255,.35)}
+.hero-headline{font-family:'Assistant',sans-serif;font-size:38px;font-weight:800;color:#fff;line-height:1.15;letter-spacing:-.01em;margin-bottom:16px;max-width:720px}
+.hero-headline em{font-style:normal;color:#EAF0FF;border-bottom:2px solid #2D9C56;padding-bottom:2px}
 .hero-sub{font-size:14px;color:rgba(255,255,255,.65);line-height:1.65;max-width:640px}
 .hero-sub strong{color:rgba(255,255,255,.85);font-weight:600}
 .section{padding:0 48px;margin-top:32px}
 .section-title{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#7B9AB8;margin-bottom:16px;display:flex;align-items:center;gap:10px}
 .section-title::after{content:'';flex:1;height:1px;background:#D6E4F0}
 .link-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.link-card{background:#fff;border:1px solid #D6E4F0;border-radius:12px;padding:22px;box-shadow:0 1px 3px rgba(26,43,75,.05);border-top:3px solid #10B981;text-decoration:none;display:block;transition:box-shadow .15s}
+.link-card{background:#fff;border:1px solid #D6E4F0;border-radius:12px;padding:22px;box-shadow:0 1px 3px rgba(26,43,75,.05);border-top:3px solid #334FB4;text-decoration:none;display:block;transition:box-shadow .15s}
 .link-card:hover{box-shadow:0 4px 12px rgba(26,43,75,.12)}
-.link-kicker{font-family:'DM Mono',monospace;font-size:11px;color:#10B981;margin-bottom:10px;font-weight:700;letter-spacing:.06em}
+.link-kicker{font-family:'DM Mono',monospace;font-size:11px;color:#334FB4;margin-bottom:10px;font-weight:700;letter-spacing:.06em}
 .link-title{font-size:15px;font-weight:700;color:#1A2B4B;margin-bottom:8px;line-height:1.35}
 .link-body{font-size:12px;color:#6B8299;line-height:1.6}
-.footer{background:#1A2B4B;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;margin-top:48px}
+.footer{background:#121212;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;margin-top:48px}
 .footer-left{font-size:12px;color:#7B9AB8}
 .footer-left strong{color:#fff;font-weight:600}
 .footer-right{font-size:11px;color:#7B9AB8;font-family:'DM Mono',monospace}
+
+.header{align-items:center}
+.header-mark{display:flex;align-items:center;gap:12px}
+.header-mark img{height:28px;width:auto;display:block}
+.header-mark .ga-name{font-family:'Assistant',sans-serif;font-weight:700;font-size:14px;color:#fff;letter-spacing:.02em}
+.header-mark .ga-name small{display:block;font-weight:400;font-size:10px;letter-spacing:.14em;color:rgba(255,255,255,.68);text-transform:uppercase;margin-top:2px}
+.header-right{display:flex;align-items:center;gap:18px}
+.client-chip{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.85);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);padding:5px 10px;border-radius:20px;letter-spacing:.06em}
+.hero-lede{font-family:'Assistant',sans-serif;font-size:16px;font-weight:400;color:rgba(255,255,255,.88);line-height:1.55;max-width:680px;margin-top:4px}
+.hero-lede strong{color:#fff;font-weight:700}
+.stat-strip{background:#F3F3F3;border-bottom:1px solid #E4E7EC;padding:22px 48px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px}
+.stat-tile{background:#F3F3F3;padding:6px 20px}
+.stat-tile .v{font-family:'Assistant',sans-serif;font-size:32px;font-weight:800;color:#121212;letter-spacing:-.01em;line-height:1}
+.stat-tile .v small{font-size:13px;font-weight:400;color:#6B7280;margin-left:4px;letter-spacing:0}
+.stat-tile .l{font-family:'DM Mono',monospace;font-size:10.5px;color:#334FB4;letter-spacing:.1em;text-transform:uppercase;margin-top:8px;font-weight:600}
+.stat-tile .s{font-size:12px;color:#6B7280;margin-top:4px;line-height:1.4}
+.audience{padding:32px 48px 0}
+.audience-lbl{font-family:'DM Mono',monospace;font-size:10.5px;color:#6B7280;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+.audience-row{display:flex;gap:10px;flex-wrap:wrap}
+.aud-chip{display:inline-flex;flex-direction:column;background:#fff;border:1px solid #D6E4F0;border-left:4px solid #334FB4;border-radius:10px;padding:14px 18px;text-decoration:none;transition:box-shadow .15s,transform .15s;min-width:220px}
+.aud-chip:hover{box-shadow:0 4px 14px rgba(51,79,180,.14);transform:translateY(-1px)}
+.aud-name{font-family:'Assistant',sans-serif;font-size:14px;font-weight:700;color:#121212;letter-spacing:-.01em}
+.aud-role{font-size:11.5px;color:#6B7280;margin-top:2px;line-height:1.4}
+.aud-arrow{font-family:'DM Mono',monospace;font-size:11px;color:#334FB4;margin-top:8px;font-weight:600;letter-spacing:.04em}
+@media(max-width:820px){.stat-strip{grid-template-columns:1fr;gap:1px}.audience-row{flex-direction:column}.aud-chip{width:100%}.header{padding:14px 24px;flex-direction:column;align-items:flex-start;gap:10px}.header-right{gap:12px}.hero{padding:36px 24px 32px}.stat-strip{padding:18px 24px}.audience{padding:24px 24px 0}.section{padding:0 24px}}
 </style><!-- SHELL:CSS/START --><style>
 :root { --ga-blue:#334FB4; --ga-carbon:#121212; --ga-green:#2D9C56; --ga-cloud:#F3F3F3; }
 @media print { #ga-nav, #ga-credit { display:none !important; } }
-#ga-nav { position:fixed; right:20px; bottom:20px; z-index:9998;
-  background:var(--ga-carbon); color:#fff; padding:6px; border-radius:999px;
-  box-shadow:0 8px 28px rgba(18,18,18,.28), 0 2px 6px rgba(51,79,180,.25);
+body { padding-top:0; }
+
+#ga-brandbar { background:#334FB4; color:#fff; padding:14px 40px; display:flex;
+  align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  font-family:'Assistant','Inter',system-ui,-apple-system,sans-serif;
+  border-bottom:3px solid #2D9C56; }
+#ga-brandbar .gb-mark { display:flex; align-items:center; gap:12px; }
+#ga-brandbar .gb-mark img { height:26px; width:auto; display:block; }
+#ga-brandbar .gb-name { font-weight:700; font-size:14px; letter-spacing:.02em; line-height:1.1; }
+#ga-brandbar .gb-name small { display:block; font-weight:400; font-size:10px;
+  letter-spacing:.14em; color:rgba(255,255,255,.72); text-transform:uppercase; margin-top:2px; }
+#ga-brandbar .gb-right { display:flex; align-items:center; gap:14px; font-size:11.5px;
+  color:rgba(255,255,255,.85); font-family:'DM Mono',monospace; }
+#ga-brandbar .gb-chip { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16);
+  padding:5px 10px; border-radius:20px; letter-spacing:.06em; }
+@media (max-width:700px) { #ga-brandbar { padding:10px 18px; }
+  #ga-brandbar .gb-right { font-size:10.5px; gap:8px; } }
+
+#ga-nav { position:fixed; top:76px; left:50%; transform:translateX(-50%); z-index:9998;
+  background:var(--ga-carbon); color:#fff; padding:5px; border-radius:999px;
+  box-shadow:0 6px 22px rgba(18,18,18,.32), 0 2px 6px rgba(51,79,180,.25);
   display:flex; gap:2px; font-family:'Assistant','Inter',system-ui,-apple-system,sans-serif;
-  font-size:12.5px; font-weight:600; letter-spacing:.02em; border:1px solid rgba(255,255,255,.06); }
+  font-size:12.5px; font-weight:600; letter-spacing:.02em; border:1px solid rgba(255,255,255,.08); }
 #ga-nav a { color:rgba(255,255,255,.72); text-decoration:none; padding:8px 13px;
   border-radius:999px; display:inline-flex; align-items:center; gap:7px;
   transition:background .15s ease, color .15s ease; }
@@ -46,9 +89,9 @@ body{font-family:'DM Sans',sans-serif;background:#F0F4F8;color:#1A2B4B;min-heigh
 #ga-nav a.current:hover { background:var(--ga-blue); }
 #ga-nav svg { flex-shrink:0; }
 @media (max-width:700px) {
-  #ga-nav { right:12px; bottom:12px; padding:5px; font-size:0; }
-  #ga-nav a { padding:9px; }
-  #ga-nav a.current { font-size:12px; padding:9px 12px; }
+  #ga-nav { top:62px; padding:4px; font-size:0; }
+  #ga-nav a { padding:8px; }
+  #ga-nav a.current { font-size:12px; padding:8px 11px; }
 }
 #ga-credit { margin-top:0; background:var(--ga-carbon); color:rgba(255,255,255,.78);
   padding:22px 40px; display:flex; align-items:center; justify-content:space-between; gap:24px;
@@ -64,17 +107,43 @@ body{font-family:'DM Sans',sans-serif;background:#F0F4F8;color:#1A2B4B;min-heigh
 #ga-credit a.ga-cta:hover { background:#4560c8; }
 #ga-credit a.ga-cta:focus-visible { outline:2px solid var(--ga-green); outline-offset:2px; }
 </style><!-- SHELL:CSS/END --></head><body>
+<!-- SHELL:HEADER/START --><div id="ga-brandbar" role="banner"><div class="gb-mark"><img src="assets/ga-logo-white.svg" alt="Growth Automated"><div class="gb-name">Growth Automated<small>Pragmatic AEO · Prepared for TELUS</small></div></div><div class="gb-right"><span class="gb-chip">Overview</span><span>Client engagement · report hub</span></div></div><!-- SHELL:HEADER/END -->
+
 <div class="page">
 
-<div class="header">
-  <div class="header-brand">Telus · Answer Engine Optimization</div>
-  <div class="header-date"><!-- STAMP:START -->Tracked since June 2026 · updated August 31, 2026<!-- STAMP:END --></div>
-</div>
+
 
 <div class="hero">
-  <div class="hero-eyebrow">Growth Automated · Pragmatic AEO</div>
-  <div class="hero-headline">Telus — <em>Answer Engine Optimization</em></div>
-  <div class="hero-sub"><!-- HERO:START -->Ongoing AI visibility tracking for Telus across <strong>5 AI models</strong> and <strong>20 ICP queries</strong>. Current headline (30d, as of August 31, 2026): visibility <strong>67/100</strong> over <strong>2,509 runs</strong> — stable, down 4 points since tracking began. 9 pulls on record since July 17, 2026.<!-- HERO:END --></div>
+  <div class="hero-eyebrow">Growth Automated <span class="divider"></span> Pragmatic AEO <span class="divider"></span> Nine weeks of live measurement</div>
+  <div class="hero-headline">TELUS in the <em>answer</em>.<br>Every model. Every week. Measured.</div>
+  <div class="hero-lede"><!-- HERO:START -->Nine weekly pulls across 5 AI models and 20 ICP queries. Telus leads the category but the lead is narrowing — Rogers is climbing, and the exposed surface is small business.<!-- HERO:END --></div>
+</div>
+
+<div class="stat-strip">
+  <div class="stat-tile"><div class="v">67<small>/100</small></div><div class="l">AI Visibility · 30d</div><div class="s">stable, down 4 pts since tracking began Jul 17</div></div>
+  <div class="stat-tile"><div class="v">2,509</div><div class="l">Model runs · 30d</div><div class="s">5 surfaces · Google AI Mode strongest at 75</div></div>
+  <div class="stat-tile"><div class="v">9</div><div class="l">Consecutive weekly pulls</div><div class="s">automated Monday cadence · Aug 31 latest</div></div>
+</div>
+
+<div class="audience">
+  <div class="audience-lbl">Start where it matters to you</div>
+  <div class="audience-row">
+    <a class="aud-chip" href="scorecard.html#david">
+      <div class="aud-name">David Fuller</div>
+      <div class="aud-role">President, Telco Division · the unified read</div>
+      <div class="aud-arrow">Scorecard →</div>
+    </a>
+    <a class="aud-chip" href="scorecard.html#katherine">
+      <div class="aud-name">Katherine Emberley</div>
+      <div class="aud-role">President, SMB · the growth surface</div>
+      <div class="aud-arrow">SMB case →</div>
+    </a>
+    <a class="aud-chip" href="full-report.html">
+      <div class="aud-name">Kim Nguyen</div>
+      <div class="aud-role">VP, Digital &amp; Channels · the operating detail</div>
+      <div class="aud-arrow">Interactive report →</div>
+    </a>
+  </div>
 </div>
 
 <div class="section">
