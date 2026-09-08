@@ -12,6 +12,8 @@ PAGE = REPO / "index.html"
 
 
 def splice(src, a, b, content):
+    if a not in src or b not in src:
+        return src  # marker retired — skip silently rather than break the weekly job
     i = src.index(a) + len(a)
     j = src.index(b)
     return src[:i] + content + src[j:]

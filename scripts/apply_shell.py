@@ -43,11 +43,29 @@ ICONS = {
 SHELL_CSS = """
 :root { --ga-blue:#334FB4; --ga-carbon:#121212; --ga-green:#2D9C56; --ga-cloud:#F3F3F3; }
 @media print { #ga-nav, #ga-credit { display:none !important; } }
-#ga-nav { position:fixed; right:20px; bottom:20px; z-index:9998;
-  background:var(--ga-carbon); color:#fff; padding:6px; border-radius:999px;
-  box-shadow:0 8px 28px rgba(18,18,18,.28), 0 2px 6px rgba(51,79,180,.25);
+body { padding-top:0; }
+
+#ga-brandbar { background:#334FB4; color:#fff; padding:14px 40px; display:flex;
+  align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  font-family:'Assistant','Inter',system-ui,-apple-system,sans-serif;
+  border-bottom:3px solid #2D9C56; }
+#ga-brandbar .gb-mark { display:flex; align-items:center; gap:12px; }
+#ga-brandbar .gb-mark img { height:26px; width:auto; display:block; }
+#ga-brandbar .gb-name { font-weight:700; font-size:14px; letter-spacing:.02em; line-height:1.1; }
+#ga-brandbar .gb-name small { display:block; font-weight:400; font-size:10px;
+  letter-spacing:.14em; color:rgba(255,255,255,.72); text-transform:uppercase; margin-top:2px; }
+#ga-brandbar .gb-right { display:flex; align-items:center; gap:14px; font-size:11.5px;
+  color:rgba(255,255,255,.85); font-family:'DM Mono',monospace; }
+#ga-brandbar .gb-chip { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16);
+  padding:5px 10px; border-radius:20px; letter-spacing:.06em; }
+@media (max-width:700px) { #ga-brandbar { padding:10px 18px; }
+  #ga-brandbar .gb-right { font-size:10.5px; gap:8px; } }
+
+#ga-nav { position:fixed; top:76px; left:50%; transform:translateX(-50%); z-index:9998;
+  background:var(--ga-carbon); color:#fff; padding:5px; border-radius:999px;
+  box-shadow:0 6px 22px rgba(18,18,18,.32), 0 2px 6px rgba(51,79,180,.25);
   display:flex; gap:2px; font-family:'Assistant','Inter',system-ui,-apple-system,sans-serif;
-  font-size:12.5px; font-weight:600; letter-spacing:.02em; border:1px solid rgba(255,255,255,.06); }
+  font-size:12.5px; font-weight:600; letter-spacing:.02em; border:1px solid rgba(255,255,255,.08); }
 #ga-nav a { color:rgba(255,255,255,.72); text-decoration:none; padding:8px 13px;
   border-radius:999px; display:inline-flex; align-items:center; gap:7px;
   transition:background .15s ease, color .15s ease; }
@@ -57,9 +75,9 @@ SHELL_CSS = """
 #ga-nav a.current:hover { background:var(--ga-blue); }
 #ga-nav svg { flex-shrink:0; }
 @media (max-width:700px) {
-  #ga-nav { right:12px; bottom:12px; padding:5px; font-size:0; }
-  #ga-nav a { padding:9px; }
-  #ga-nav a.current { font-size:12px; padding:9px 12px; }
+  #ga-nav { top:62px; padding:4px; font-size:0; }
+  #ga-nav a { padding:8px; }
+  #ga-nav a.current { font-size:12px; padding:8px 11px; }
 }
 #ga-credit { margin-top:0; background:var(--ga-carbon); color:rgba(255,255,255,.78);
   padding:22px 40px; display:flex; align-items:center; justify-content:space-between; gap:24px;
@@ -75,6 +93,29 @@ SHELL_CSS = """
 #ga-credit a.ga-cta:hover { background:#4560c8; }
 #ga-credit a.ga-cta:focus-visible { outline:2px solid var(--ga-green); outline-offset:2px; }
 """
+
+
+def brandbar_html(current):
+    label_by_page = {
+        "index.html":        ("Overview",   "Client engagement · report hub"),
+        "scorecard.html":    ("Scorecard",  "One-page executive read"),
+        "longitudinal.html": ("Trajectory", "Longitudinal view"),
+        "full-report.html":  ("Report",     "Interactive AI visibility report"),
+    }
+    label, sub = label_by_page.get(current, ("", ""))
+    return (
+        '<div id="ga-brandbar" role="banner">'
+        '<div class="gb-mark">'
+        '<img src="assets/ga-logo-white.svg" alt="Growth Automated">'
+        '<div class="gb-name">Growth Automated<small>Pragmatic AEO · Prepared for TELUS</small></div>'
+        '</div>'
+        '<div class="gb-right">'
+        f'<span class="gb-chip">{label}</span>'
+        f'<span>{sub}</span>'
+        '</div>'
+        '</div>'
+    )
+
 
 def nav_html(current):
     items = []
@@ -116,12 +157,30 @@ def apply_shell(path, with_credit=True):
     src = p.read_text()
     style_block = f"<style>{SHELL_CSS}</style>"
     src = apply_region(src, "CSS", style_block, "</head>")
+    src = apply_region(src, "HEADER", brandbar_html(path), "</body>")
     src = apply_region(src, "NAV", nav_html(path), "</body>")
     if with_credit:
         src = apply_region(src, "CREDIT", credit_html(), "</body>")
     p.write_text(src)
+    _hoist_header(path)
     return path
 
+
+
+
+def _hoist_header(path):
+    """Move the header block to immediately after <body>, once per file."""
+    import re
+    p = pathlib.Path(path); s = p.read_text()
+    m = re.search(r"<!-- SHELL:HEADER/START -->.*?<!-- SHELL:HEADER/END -->", s, flags=re.S)
+    if not m: return
+    block = m.group(0)
+    # remove existing
+    s = s.replace(block, "")
+    # insert immediately after <body...>
+    s = re.sub(r"(<body[^>]*>)", r"\1\n" + block.replace("\\", "\\\\"), s, count=1)
+    # regex escaping got weird — use string form
+    p.write_text(s)
 
 if __name__ == "__main__":
     changed = []
