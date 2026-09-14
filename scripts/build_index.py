@@ -45,8 +45,9 @@ def main():
     md_note = ""
     if mds:
         md_date = mds[-1].stem.replace("visibility-data-", "")
-        md_note = (f' The first dated snapshot (<a href="data/{mds[-1].name}" '
-                   f'style="color:#10B981">{pretty(md_date)}</a>) is kept for reference.')
+        # Plain span — the whole card is already an <a>, and HTML5 forbids nested anchors.
+        md_note = (f' The first dated snapshot (<span style="color:#10B981;font-weight:600">'
+                   f'{pretty(md_date)}</span>) is kept for reference.')
     card = (f'<a class="link-card" href="data/longitudinal/telus.jsonl">\n'
             f'      <div class="link-kicker">DATA</div>\n'
             f'      <div class="link-title">Tracking store · {len(api)} pulls to {pretty(d)}</div>\n'
@@ -54,8 +55,33 @@ def main():
             f'breakdown, prompt matrix, competitors and citations. Every page on this site is generated from it.'
             f'{md_note}</div>\n    </a>')
 
+    # Stat strip tiles — regenerated from the same source as the hero.
+    models = a.get("models", {})
+    surface_labels = {"chatgpt": "ChatGPT", "gemini": "Gemini", "perplexity": "Perplexity",
+                      "google_ai_overview": "Google AIO", "google_ai_mode": "Google AI Mode"}
+    if models:
+        top_key = max(models, key=lambda k: models[k].get("score", 0))
+        top_label = surface_labels.get(top_key, top_key)
+        top_score = models[top_key].get("score", 0)
+        runs_sub = f"{len(models)} surfaces · {top_label} strongest at {top_score}"
+    else:
+        runs_sub = "5 surfaces tracked"
+    latest_short = datetime.date.fromisoformat(d).strftime("%b %-d")
+    stat = (
+        f'\n  <div class="stat-tile"><div class="v">{a["visibility_score"]}<small>/100</small></div>'
+        f'<div class="l">AI Visibility · 30d</div>'
+        f'<div class="s">{trend}, {move.replace("since tracking began", "since tracking began Jul 17")}</div></div>\n'
+        f'  <div class="stat-tile"><div class="v">{a["runs"]:,}</div>'
+        f'<div class="l">Model runs · 30d</div>'
+        f'<div class="s">{runs_sub}</div></div>\n'
+        f'  <div class="stat-tile"><div class="v">{len(api)}</div>'
+        f'<div class="l">Consecutive weekly pulls</div>'
+        f'<div class="s">automated Monday cadence · {latest_short} latest</div></div>\n'
+    )
+
     s = PAGE.read_text()
     s = splice(s, "<!-- HERO:START -->", "<!-- HERO:END -->", hero)
+    s = splice(s, "<!-- STAT:START -->", "<!-- STAT:END -->", stat)
     s = splice(s, "<!-- STAMP:START -->", "<!-- STAMP:END -->",
                f"Tracked since June 2026 · updated {pretty(d)}")
     today = datetime.date.today()
