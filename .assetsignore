@@ -1,0 +1,14 @@
+# Only web-servable files should ship to the Worker's asset store.
+# Everything below stays local / in git but isn't served.
+worker.js
+wrangler.jsonc
+.assetsignore
+.gitignore
+.DS_Store
+.git/
+.github/
+.claude/
+.wrangler/
+README.md
+DEPLOY.md
+scripts/

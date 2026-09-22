@@ -1,0 +1,13 @@
+{
+  "name": "telus-aeo",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-22",
+  "workers_dev": true,
+  // No custom domain — growthautomated.ai DNS stays at GoDaddy.
+  // The workers.dev URL is the permanent address; share it as-is.
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  }
+}

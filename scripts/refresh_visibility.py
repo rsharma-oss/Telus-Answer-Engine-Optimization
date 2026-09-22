@@ -41,6 +41,35 @@ def git_autopush(rel_path, date_str):
         print(f"WARNING: auto-push failed ({e}) — record saved locally; will ride the next push", file=sys.stderr)
 
 
+# Full path to npx — LaunchAgents get a minimal PATH; wrangler ships via npx.
+_NPX = "/usr/local/bin/npx"
+
+def cloudflare_deploy():
+    """Push the current asset tree to the Cloudflare Static Assets Worker
+    (telus-aeo). Uses OAuth credentials from `~/.wrangler/config/` set up
+    by an interactive `wrangler login`. Non-fatal on failure — the source
+    is still safe in git; the operator can re-deploy by hand."""
+    try:
+        # Ensure node/npx can find each other under launchd's minimal PATH.
+        env = {**__import__("os").environ, "PATH":
+               "/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin"}
+        r = subprocess.run(
+            [_NPX, "wrangler", "deploy"],
+            cwd=REPO, env=env, capture_output=True, text=True, timeout=180,
+        )
+        if r.returncode == 0:
+            # Last line of wrangler output is the Version ID line.
+            tail = "\n".join(r.stdout.strip().splitlines()[-3:])
+            print(f"cloudflare deploy ok\n{tail}")
+        else:
+            print(f"WARNING: cloudflare deploy failed (rc={r.returncode})\n"
+                  f"stdout:\n{r.stdout}\nstderr:\n{r.stderr}", file=sys.stderr)
+    except Exception as e:
+        print(f"WARNING: cloudflare deploy raised ({e}) — GitHub push already "
+              f"succeeded; re-run `npx wrangler deploy` manually to sync",
+              file=sys.stderr)
+
+
 def _context():
     """Pick a context that actually has CAs loaded. The python.org build ships an
     empty trust store; the system /etc/ssl/cert.pem bundle is the reliable one."""
@@ -318,6 +347,9 @@ def main():
     git_autopush("index.html", record["date"] + " index")
     git_autopush("scorecard.html", record["date"] + " scorecard")
     git_autopush(str(out.relative_to(REPO)), record["date"])
+
+    # Publish to the live gated Worker at telus-aeo.rahul-308.workers.dev.
+    cloudflare_deploy()
 
 
 if __name__ == "__main__":
