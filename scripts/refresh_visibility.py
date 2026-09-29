@@ -70,6 +70,112 @@ def cloudflare_deploy():
               file=sys.stderr)
 
 
+# ------------- Weekly archive stamping (TELUS only) -------------
+# Every Monday: copy the current exec PDFs into /archive/{name}-{yyyy-mm-dd}.pdf
+# so the URL is frozen for future reference, and prepend a row to /history.html.
+# Idempotent — safe to re-run.
+EXEC_PDFS = [
+    ("katherine-smb.pdf",       "Katherine · SMB read",   "President, TELUS SMB"),
+    ("kevin-cmo.pdf",           "Kevin · Brand narrative","Chief Marketing Officer"),
+    ("david-telco.pdf",         "David · Telco Division", "President, Telco Division"),
+    ("kim-channels.pdf",        "Kim · Channel-specific", "VP, Digital & Channels"),
+    ("rob-consumer-marcom.pdf", "Rob · Consumer Marcom",  "Director, Consumer Marcom"),
+    ("jacob-organic.pdf",       "Jacob · Organic Ops",    "Head of Organic"),
+]
+
+
+def stamp_archive(record_date):
+    """Copy current exec PDFs to /archive/{name}-{date}.pdf, once per date per file.
+    Returns the list of files freshly stamped this run."""
+    import shutil
+    archive_dir = REPO / "archive"
+    archive_dir.mkdir(exist_ok=True)
+    stamped = []
+    for src_name, _, _ in EXEC_PDFS:
+        src = REPO / src_name
+        if not src.exists():
+            print(f"  [archive] skip {src_name} (not on disk)")
+            continue
+        dst = archive_dir / f"{src_name[:-4]}-{record_date}.pdf"
+        if dst.exists():
+            print(f"  [archive] archive/{dst.name} already present (idempotent)")
+            continue
+        shutil.copy2(src, dst)
+        stamped.append(dst.name)
+        print(f"  [archive] stamped {dst.name}")
+    return stamped
+
+
+def insert_history_row(record_date, api_snapshot):
+    """Prepend a new week card to history.html between WEEKS markers.
+    Only touches the marker region; existing cards are preserved.
+    Idempotent — a card for this date won't be inserted twice."""
+    history = REPO / "history.html"
+    if not history.exists():
+        print("  [archive] history.html missing — skipping row insert")
+        return
+    src = history.read_text()
+    start_tag = "<!-- WEEKS:START -->"
+    end_tag = "<!-- WEEKS:END -->"
+    if start_tag not in src or end_tag not in src:
+        print("  [archive] history.html WEEKS markers missing — skipping")
+        return
+    # Already have a row for this date? Idempotent guard.
+    if f"katherine-smb-{record_date}.pdf" in src:
+        print(f"  [archive] history.html already has row for {record_date}")
+        return
+
+    # Derive week number from the highest existing "<!-- WEEK N -->" marker.
+    # More robust than counting DOM matches (which false-match .wk-note, .wk-head).
+    existing = [int(m) for m in re.findall(r'<!-- WEEK (\d+) -->', src)]
+    week_num = (max(existing) if existing else 0) + 1
+
+    parts = record_date.split("-")
+    months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+    pretty = f"{months[int(parts[1]) - 1]} {int(parts[2])}, {parts[0]}"
+
+    score = api_snapshot.get("visibility_score", "?")
+    runs = api_snapshot.get("runs", "?")
+
+    pdf_rows = []
+    for src_name, label, role in EXEC_PDFS:
+        rel = f"archive/{src_name[:-4]}-{record_date}.pdf"
+        if not (REPO / rel).exists():
+            continue
+        pdf_rows.append(
+            f'      <a class="pdf-row" href="{rel}" target="_blank">'
+            f'<span class="name">{label}<small>{role}</small></span>'
+            f'<span class="kind">PDF</span></a>'
+        )
+    pdfs_html = "\n".join(pdf_rows) if pdf_rows else "      <em>No exec PDFs on disk this week.</em>"
+
+    new_card = (
+        f'<!-- WEEK {week_num} -->\n'
+        f'<div class="wk">\n'
+        f'  <div class="wk-head">\n'
+        f'    <div class="wk-h-l">\n'
+        f'      <div class="wk-tag">Week {week_num} &middot; Latest</div>\n'
+        f'      <div class="wk-date">{pretty}</div>\n'
+        f'    </div>\n'
+        f'    <div class="wk-h-r">Auto-stamped by Monday refresh</div>\n'
+        f'  </div>\n'
+        f'  <div class="wk-body">\n'
+        f'    <p class="wk-note"><strong>Panel-wide TELUS at {score}/100</strong> ({runs} runs this pull &middot; week {week_num} of the tracked engagement). '
+        f'<em>WoW insights analysis pending — request the weekly walkthrough or open a PDF below.</em></p>\n'
+        f'    <div class="pdfs">\n{pdfs_html}\n    </div>\n'
+        f'  </div>\n'
+        f'</div>\n\n'
+    )
+
+    # Downgrade any prior "· Latest" tag so only the newest week wears it.
+    src = re.sub(r'class="wk-tag">Week (\d+) &middot; Latest</div>',
+                 r'class="wk-tag">Week \1</div>', src)
+
+    idx = src.index(start_tag) + len(start_tag) + 1  # newline after marker
+    history.write_text(src[:idx] + new_card + src[idx:])
+    print(f"  [archive] inserted Week {week_num} row into history.html")
+
+
 def _context():
     """Pick a context that actually has CAs loaded. The python.org build ships an
     empty trust store; the system /etc/ssl/cert.pem bundle is the reliable one."""
@@ -198,6 +304,13 @@ SCRUB_RULES = [
     (re.compile(_VENDOR), "visibility-tracker"),
 ]
 SCRUB_GLOBS = ("*.html", "*.md", "archive/*.html", "data/*.md")
+# Internal-only working docs where the vendor CAN be named (never published to
+# Cloudflare per .assetsignore, never sent as a public deliverable).
+SCRUB_EXCLUDE_PREFIXES = ("meeting-",)
+
+
+def _skip_scrub(p):
+    return p.name.startswith(SCRUB_EXCLUDE_PREFIXES)
 
 
 def scrub_vendor_name():
@@ -205,6 +318,8 @@ def scrub_vendor_name():
     changed = []
     for pattern in SCRUB_GLOBS:
         for f in REPO.glob(pattern):
+            if _skip_scrub(f):
+                continue
             try:
                 src = f.read_text()
             except (UnicodeDecodeError, OSError):
@@ -225,6 +340,8 @@ def verify_scrub():
     hits = []
     for pattern in SCRUB_GLOBS:
         for f in REPO.glob(pattern):
+            if _skip_scrub(f):
+                continue
             try:
                 if re.search(_VENDOR, f.read_text()):
                     hits.append(f.relative_to(REPO).as_posix())
@@ -347,6 +464,19 @@ def main():
     git_autopush("index.html", record["date"] + " index")
     git_autopush("scorecard.html", record["date"] + " scorecard")
     git_autopush(str(out.relative_to(REPO)), record["date"])
+
+    # -------- Weekly archive step (TELUS repo only) --------
+    # Freeze this week's exec PDFs at /archive/{name}-{date}.pdf and add a
+    # row to /history.html. Skipped on Rogers/Cogeco runs — they don't ship
+    # exec-shaped PDFs from this repo.
+    if args.brand == "telus":
+        print("[archive] stamping exec PDFs + history row...")
+        stamped = stamp_archive(record["date"])
+        insert_history_row(record["date"], record["api"])
+        # Push any new/changed archive files + history in a single commit.
+        for rel in stamped:
+            git_autopush(f"archive/{rel}", record["date"] + " archive")
+        git_autopush("history.html", record["date"] + " weekly archive row")
 
     # Publish to the live gated Worker at telus-aeo.rahul-308.workers.dev.
     cloudflare_deploy()

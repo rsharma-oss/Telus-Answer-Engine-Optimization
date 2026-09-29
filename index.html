@@ -60,7 +60,7 @@ body{font-family:'DM Sans',sans-serif;background:#F0F4F8;color:#1A2B4B;min-heigh
 .ribbon{background:linear-gradient(180deg,#FAFBFD 0%,#F3F3F3 100%);border-bottom:1px solid #E4E7EC;padding:20px 48px}
 .ribbon-lbl{font-family:'DM Mono',monospace;font-size:10.5px;color:#6B7280;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px;font-weight:600;display:inline-flex;align-items:center;gap:10px}
 .ribbon-lbl::before{content:'';width:20px;height:2.5px;background:#334FB4;border-radius:3px}
-.ribbon-row{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.ribbon-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .rib-chip{background:#fff;border:1px solid #D6E4F0;border-top:3px solid #334FB4;border-radius:10px;padding:11px 12px 11px 34px;text-decoration:none;color:inherit;display:block;transition:transform .15s,box-shadow .2s;position:relative;min-width:0}
 .rib-chip.no-seq{padding-left:12px}
 .rib-seq{position:absolute;top:9px;left:9px;width:20px;height:20px;border-radius:50%;background:#121212;color:#fff;font-family:'Assistant',sans-serif;font-weight:800;font-size:11px;line-height:20px;text-align:center;letter-spacing:0;box-shadow:0 2px 4px rgba(0,0,0,.16);z-index:1}
@@ -196,6 +196,7 @@ body { padding-top:0; }
 
 
 
+
 <div class="page">
 
 
@@ -266,6 +267,21 @@ body { padding-top:0; }
       <div class="rib-tag">PDF</div>
       <div class="rib-name">Katherine Emberley</div>
       <div class="rib-role">SMB category read</div>
+    </a>
+    <a class="rib-chip no-seq" href="rob-consumer-marcom.pdf" target="_blank">
+      <div class="rib-tag">PDF</div>
+      <div class="rib-name">Rob Daintree</div>
+      <div class="rib-role">Consumer Marcom read</div>
+    </a>
+    <a class="rib-chip no-seq" href="jacob-organic.pdf" target="_blank">
+      <div class="rib-tag">PDF</div>
+      <div class="rib-name">Jacob Hewlett-Case</div>
+      <div class="rib-role">Organic Ops read</div>
+    </a>
+    <a class="rib-chip no-seq" href="history.html" style="border-top-color:#334FB4">
+      <div class="rib-tag" style="background:#334FB4;color:#fff">HIST</div>
+      <div class="rib-name">Weekly refresh archive</div>
+      <div class="rib-role">Week 12 &middot; Week 13 &middot; ...</div>
     </a>
   </div>
 </div>
@@ -355,7 +371,7 @@ body { padding-top:0; }
 
 <div class="footer">
   <div class="footer-left"><strong>Pragmatic AEO</strong> · Growth Automated · growthautomated.ai</div>
-  <div class="footer-right"><!-- FOOT:START -->Data through September 28, 2026<!-- FOOT:END --> · rahul@growthautomated.ai</div>
+  <div class="footer-right"><!-- FOOT:START -->Data through September 28, 2026 · page rebuilt September 29, 2026<!-- FOOT:END --> · rahul@growthautomated.ai</div>
 </div>
 
 </div>
@@ -708,4 +724,4 @@ body { padding-top:0; }
   });
 </script>
 
-<!-- SHELL:NAV/START --><nav id="ga-nav" role="navigation" aria-label="Report sections"><a href="index.html" class="current" aria-current="page" aria-label="Overview"><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8.5L10 3l7 5.5V16a1 1 0 0 1-1 1h-3v-5H8v5H5a1 1 0 0 1-1-1V8.5z"/></svg><span>Overview</span></a><div class="nav-group"><a href="scorecard.html" class="has-children" aria-label="Scorecard" aria-haspopup="true"><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="14" height="12" rx="2"/><path d="M6 8h8M6 11h5"/></svg><span>Scorecard</span><svg class="caret" viewBox="0 0 12 12" width="9" height="9" fill="currentColor"><path d="M2 4l4 4 4-4z"/></svg></a><div class="nav-dropdown" role="menu"><a class="primary" href="scorecard.html"><span class="lbl">Aggregate scorecard</span><span class="kind">SCORECARD</span></a><a class="pdf" href="katherine-smb.pdf" target="_blank"><span class="lbl">Katherine · SMB read</span><span class="kind">PDF</span></a><a class="pdf" href="david-telco.pdf" target="_blank"><span class="lbl">David · Telco Division</span><span class="kind">PDF</span></a><a class="pdf" href="kevin-cmo.pdf" target="_blank"><span class="lbl">Kevin · Brand narrative</span><span class="kind">PDF</span></a><a class="pdf" href="kim-channels.pdf" target="_blank"><span class="lbl">Kim · Channel-specific</span><span class="kind">PDF</span></a><a class="pdf" href="ip-map.pdf" target="_blank"><span class="lbl">What's proprietary · IP map</span><span class="kind">PDF</span></a><a class="pdf" href="platform.pdf" target="_blank"><span class="lbl">What's proprietary · Platform</span><span class="kind">PDF</span></a></div></div><a href="index.html?open=nda-modal" class="locked" aria-label="Report (NDA required)"><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 3h7l3 3v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M12 3v3h3M7 10h6M7 13h6"/></svg><span>Report</span><span class="lock-glyph" aria-hidden="true">🔒</span></a><a href="longitudinal.html" aria-label="Trajectory"><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 15l4-4 3 3 7-8"/><path d="M13 6h4v4"/></svg><span>Trajectory</span></a></nav><!-- SHELL:NAV/END --><!-- SHELL:CREDIT/START --><footer id="ga-credit" role="contentinfo"><div class="ga-brand"><img class="ga-mark" src="assets/ga-logo-white.svg" alt="Growth Automated"><span class="ga-tag">Pragmatic AEO<small>Growth Automated · growthautomated.ai</small></span></div><a class="ga-cta" href="https://seo-for-ai.growthautomated.ai/book_time" target="_blank" rel="noopener">Book time with Rahul</a></footer><!-- SHELL:CREDIT/END --></body></html>
+<!-- SHELL:NAV/START --><nav id="ga-nav" role="navigation" aria-label="Report sections"><a href="index.html" class="current" aria-current="page" aria-label="Overview"><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8.5L10 3l7 5.5V16a1 1 0 0 1-1 1h-3v-5H8v5H5a1 1 0 0 1-1-1V8.5z"/></svg><span>Overview</span></a><div class="nav-group"><a href="scorecard.html" class="has-children" aria-label="Scorecard" aria-haspopup="true"><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="14" height="12" rx="2"/><path d="M6 8h8M6 11h5"/></svg><span>Scorecard</span><svg class="caret" viewBox="0 0 12 12" width="9" height="9" fill="currentColor"><path d="M2 4l4 4 4-4z"/></svg></a><div class="nav-dropdown" role="menu"><a class="primary" href="scorecard.html"><span class="lbl">Aggregate scorecard</span><span class="kind">SCORECARD</span></a><a class="pdf" href="katherine-smb.pdf" target="_blank"><span class="lbl">Katherine · SMB read</span><span class="kind">PDF</span></a><a class="pdf" href="david-telco.pdf" target="_blank"><span class="lbl">David · Telco Division</span><span class="kind">PDF</span></a><a class="pdf" href="kevin-cmo.pdf" target="_blank"><span class="lbl">Kevin · Brand narrative</span><span class="kind">PDF</span></a><a class="pdf" href="kim-channels.pdf" target="_blank"><span class="lbl">Kim · Channel-specific</span><span class="kind">PDF</span></a><a class="pdf" href="rob-consumer-marcom.pdf" target="_blank"><span class="lbl">Rob · Consumer Marcom</span><span class="kind">PDF</span></a><a class="pdf" href="jacob-organic.pdf" target="_blank"><span class="lbl">Jacob · Head of Organic</span><span class="kind">PDF</span></a><a class="pdf" href="ip-map.pdf" target="_blank"><span class="lbl">What's proprietary · IP map</span><span class="kind">PDF</span></a><a class="pdf" href="platform.pdf" target="_blank"><span class="lbl">What's proprietary · Platform</span><span class="kind">PDF</span></a><a class="primary" href="history.html"><span class="lbl">Weekly refresh · archive</span><span class="kind">HISTORY</span></a></div></div><a href="index.html?open=nda-modal" class="locked" aria-label="Report (NDA required)"><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 3h7l3 3v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M12 3v3h3M7 10h6M7 13h6"/></svg><span>Report</span><span class="lock-glyph" aria-hidden="true">🔒</span></a><a href="longitudinal.html" aria-label="Trajectory"><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 15l4-4 3 3 7-8"/><path d="M13 6h4v4"/></svg><span>Trajectory</span></a></nav><!-- SHELL:NAV/END --><!-- SHELL:CREDIT/START --><footer id="ga-credit" role="contentinfo"><div class="ga-brand"><img class="ga-mark" src="assets/ga-logo-white.svg" alt="Growth Automated"><span class="ga-tag">Pragmatic AEO<small>Growth Automated · growthautomated.ai</small></span></div><a class="ga-cta" href="https://seo-for-ai.growthautomated.ai/book_time" target="_blank" rel="noopener">Book time with Rahul</a></footer><!-- SHELL:CREDIT/END --></body></html>

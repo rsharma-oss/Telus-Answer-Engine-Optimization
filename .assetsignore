@@ -12,3 +12,7 @@ wrangler.jsonc
 README.md
 DEPLOY.md
 scripts/
+# Internal-only working docs — talk-track notes stay off the site.
+# The presentation PDF ships (linked from the landing ribbon).
+meeting-*.html
+meeting-01-notes.pdf

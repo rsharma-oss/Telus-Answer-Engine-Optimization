@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Growth Automated · TELUS · Proposal</title>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue:#334FB4; --carbon:#121212; --green:#2D9C56;
+    --cloud:#F3F3F3; --paper:#FAFAFA; --ink:#1A2B4B; --mute:#6B7280;
+    --line:#D6E4F0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--paper);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  body{scroll-snap-type:y mandatory;overflow-y:scroll;height:100vh}
+
+  .slide{scroll-snap-align:start;min-height:100vh;padding:64px 72px 72px;position:relative;display:flex;flex-direction:column;justify-content:space-between}
+  .slide + .slide{border-top:1px solid var(--line)}
+
+  /* Header on every slide */
+  .head{display:flex;align-items:center;justify-content:space-between;font-family:'DM Mono',monospace;font-size:11px;color:var(--mute);letter-spacing:.08em;text-transform:uppercase}
+  .head .brand{display:flex;align-items:center;gap:10px;color:var(--carbon)}
+  .head .brand img{height:22px;width:auto;display:block}
+  .head .brand strong{font-family:'Assistant',sans-serif;font-weight:700;font-size:12px;color:var(--carbon);letter-spacing:.02em}
+  .head .num{color:var(--blue);font-weight:600}
+
+  /* Slide 1 — observation */
+  .kicker{font-family:'DM Mono',monospace;font-size:11px;color:var(--blue);letter-spacing:.16em;text-transform:uppercase;font-weight:600;margin-bottom:24px}
+  h1{font-family:'DM Serif Display',serif;font-size:60px;line-height:1.05;color:var(--carbon);letter-spacing:-.02em;margin-bottom:32px;max-width:920px}
+  h1 em{font-style:italic;color:var(--blue)}
+  h1 .u{border-bottom:3px solid var(--green);padding-bottom:2px}
+
+  .lede{font-size:19px;line-height:1.55;color:var(--ink);max-width:820px;margin-bottom:36px;font-weight:400}
+  .lede strong{color:var(--carbon);font-weight:700}
+
+  .stat-row{display:grid;grid-template-columns:auto auto auto auto;gap:56px;padding:28px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:36px;align-items:end}
+  .stat .n{font-family:'Assistant',sans-serif;font-size:42px;font-weight:800;color:var(--carbon);line-height:1;letter-spacing:-.01em}
+  .stat .n small{font-size:16px;font-weight:400;color:var(--mute);margin-left:4px}
+  .stat .l{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-top:8px;font-weight:600}
+  .stat .s{font-size:12.5px;color:var(--mute);margin-top:4px;line-height:1.4;max-width:170px}
+
+  .gap-table{width:100%;border-collapse:collapse;font-size:14px}
+  .gap-table th{text-align:left;font-family:'DM Mono',monospace;font-size:10.5px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:0 0 10px;border-bottom:1px solid var(--line)}
+  .gap-table th:last-child,.gap-table td:last-child{text-align:right}
+  .gap-table td{padding:11px 0;border-bottom:1px solid #EDF1F7;color:var(--ink)}
+  .gap-table td.score{font-family:'Assistant',sans-serif;font-weight:800;color:var(--carbon);font-size:17px}
+  .gap-table .low{color:#C62828}
+  .gap-table td.q{max-width:520px;line-height:1.4}
+  .gap-table td.note{font-size:12.5px;color:var(--mute);font-style:italic}
+
+  .obs-callout{background:var(--cloud);border-left:3px solid var(--green);padding:18px 22px;font-size:14.5px;color:var(--ink);line-height:1.55;margin-top:24px;max-width:820px}
+  .obs-callout strong{color:var(--carbon)}
+
+  /* Slide 2 — engagement */
+  .eng-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:32px}
+  .eng-col h3{font-family:'Assistant',sans-serif;font-weight:800;font-size:22px;color:var(--carbon);letter-spacing:-.01em;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--blue)}
+  .eng-col ul{list-style:none;padding:0}
+  .eng-col li{padding:12px 0 12px 0;border-bottom:1px solid #EDF1F7;font-size:14.5px;color:var(--ink);line-height:1.5;display:flex;gap:12px}
+  .eng-col li:last-child{border-bottom:none}
+  .eng-col li .m{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--blue);letter-spacing:.06em;font-weight:600;text-transform:uppercase;flex-shrink:0;width:80px;padding-top:2px}
+  .eng-col li .t{flex:1}
+  .eng-col li .t strong{color:var(--carbon);font-weight:700;display:block;margin-bottom:2px}
+  .eng-col li .t span{color:var(--mute);font-size:13px}
+
+  .persona-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+  .persona{background:#fff;border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:8px;padding:16px 18px}
+  .persona .name{font-family:'Assistant',sans-serif;font-weight:800;color:var(--carbon);font-size:14.5px;letter-spacing:-.01em}
+  .persona .role{font-size:11.5px;color:var(--mute);margin-top:2px}
+  .persona .read{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--blue);letter-spacing:.06em;margin-top:10px;text-transform:uppercase;font-weight:600}
+  .persona .read span{color:var(--ink);text-transform:none;letter-spacing:0;font-family:'DM Sans',sans-serif;font-size:12.5px;display:block;margin-top:4px;font-weight:400}
+
+  /* Slide 3 — terms */
+  .terms{display:grid;grid-template-columns:1.2fr 1fr;gap:64px;margin-top:32px;align-items:start}
+  .terms-left h3{font-family:'Assistant',sans-serif;font-weight:800;font-size:22px;color:var(--carbon);letter-spacing:-.01em;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid var(--blue)}
+  .term-line{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #EDF1F7;font-size:15px;color:var(--ink)}
+  .term-line .l{color:var(--mute);font-family:'DM Mono',monospace;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;padding-top:4px}
+  .term-line .v{font-family:'Assistant',sans-serif;font-weight:700;color:var(--carbon);text-align:right}
+  .term-line .v small{display:block;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--mute);font-weight:400;margin-top:2px}
+
+  .next{background:var(--carbon);color:#fff;border-radius:12px;padding:32px}
+  .next h3{font-family:'Assistant',sans-serif;font-weight:800;font-size:20px;letter-spacing:-.01em;margin-bottom:6px}
+  .next p{color:rgba(255,255,255,.72);font-size:13.5px;line-height:1.55;margin-bottom:20px}
+  .next ol{list-style:none;padding:0;margin-bottom:24px;counter-reset:step}
+  .next ol li{counter-increment:step;padding:12px 0 12px 36px;position:relative;color:rgba(255,255,255,.9);font-size:13.5px;line-height:1.5;border-bottom:1px solid rgba(255,255,255,.08)}
+  .next ol li:last-child{border-bottom:none}
+  .next ol li::before{content:counter(step);position:absolute;left:0;top:12px;width:24px;height:24px;border-radius:50%;background:var(--green);color:#fff;font-family:'Assistant',sans-serif;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
+  .next ol li strong{color:#fff;font-weight:700}
+  .cta{display:inline-block;background:var(--green);color:#fff;text-decoration:none;font-family:'Assistant',sans-serif;font-weight:700;font-size:14.5px;padding:13px 22px;border-radius:8px;letter-spacing:.02em}
+  .cta:hover{background:#248046}
+
+  .foot{margin-top:24px;font-family:'DM Mono',monospace;font-size:10.5px;color:var(--mute);letter-spacing:.08em;text-transform:uppercase}
+
+  /* Nav dots (fixed right) */
+  .nav{position:fixed;right:24px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:100}
+  .nav a{width:9px;height:9px;border-radius:50%;background:rgba(51,79,180,.22);display:block;transition:background .2s}
+  .nav a.on{background:var(--blue)}
+
+  @media (max-width:960px){
+    .slide{padding:40px 28px 48px}
+    h1{font-size:38px;margin-bottom:22px}
+    .lede{font-size:15.5px}
+    .stat-row{grid-template-columns:1fr 1fr;gap:24px}
+    .eng-grid,.terms,.persona-row{grid-template-columns:1fr;gap:20px}
+    .nav{display:none}
+  }
+  @media print{
+    body{overflow:visible;height:auto;scroll-snap-type:none}
+    .slide{page-break-after:always;min-height:auto}
+    .nav{display:none}
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-hidden="true">
+  <a href="#s1" class="on" data-i="0"></a>
+  <a href="#s2" data-i="1"></a>
+  <a href="#s3" data-i="2"></a>
+</nav>
+
+<!-- ================= SLIDE 1 · OBSERVATION ================= -->
+<section class="slide" id="s1">
+  <div class="head">
+    <div class="brand"><img src="https://growthautomated.ai/favicon.ico" alt="" onerror="this.style.display='none'"><strong>Growth Automated</strong> · Pragmatic AEO</div>
+    <div><span class="num">01 / 03</span> · Prepared for TELUS · September 14, 2026</div>
+  </div>
+
+  <div>
+    <div class="kicker">What we've measured · nine weeks · five AI models · twenty ICP queries</div>
+    <h1>TELUS wins the <em>branded</em> answer.<br>The <span class="u">unbranded</span> commercial queries go elsewhere.</h1>
+    <p class="lede">
+      Across <strong>2,653 model runs</strong> in the 30 days to September 14, TELUS scored <strong>68/100</strong> in AI answers to Canadian telco buyers — meaningfully ahead of Bell (34) and Rogers (34) in the same measured space. On queries that name TELUS, the answer engines already cite you. On queries that don't, they cite competitors and Reddit threads.
+    </p>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="n">68<small>/100</small></div>
+        <div class="l">TELUS AI Visibility</div>
+        <div class="s">30-day window · all five surfaces</div>
+      </div>
+      <div class="stat">
+        <div class="n">34</div>
+        <div class="l">Bell · same space</div>
+        <div class="s">Rogers 34 · Freedom 11 · Videotron 2</div>
+      </div>
+      <div class="stat">
+        <div class="n">5</div>
+        <div class="l">Queries under 50</div>
+        <div class="s">All unbranded · commercial intent</div>
+      </div>
+      <div class="stat">
+        <div class="n">11</div>
+        <div class="l">Weekly pulls since Jul 17</div>
+        <div class="s">Automated Monday cadence · live</div>
+      </div>
+    </div>
+
+    <table class="gap-table">
+      <thead><tr><th>The five gap queries</th><th>Where TELUS scores</th></tr></thead>
+      <tbody>
+        <tr><td class="q">Buy best wireline solution for my home office setup</td><td class="score low">7 / 100</td></tr>
+        <tr><td class="q">Are there flexible mobile data plans I can adjust monthly?</td><td class="score low">9 / 100</td></tr>
+        <tr><td class="q">My small business needs a cost-effective wireless solution with unlimited…</td><td class="score low">40 / 100</td></tr>
+        <tr><td class="q">Has anyone experienced unexpected fees with their current provider?</td><td class="score low">45 / 100</td></tr>
+        <tr><td class="q">Considering Bell versus another provider — is 5G coverage worth it?</td><td class="score low">51 / 100</td></tr>
+      </tbody>
+    </table>
+
+    <div class="obs-callout">
+      <strong>The wedge.</strong> These aren't brand-defence queries. They're the questions a buyer asks the moment before they choose. The answer engines are answering them today, without TELUS in the response. Nine weeks of data says this pattern is stable — it will not fix itself.
+    </div>
+  </div>
+
+  <div class="foot">Source · Growth Automated tracking store · 11 pulls · 2,653 runs · Sept 14, 2026</div>
+</section>
+
+<!-- ================= SLIDE 2 · THE PANEL ================= -->
+<section class="slide" id="s2">
+  <div class="head">
+    <div class="brand"><img src="https://growthautomated.ai/favicon.ico" alt="" onerror="this.style.display='none'"><strong>Growth Automated</strong> · Pragmatic AEO</div>
+    <div><span class="num">02 / 03</span> · The Canadian Telco Panel</div>
+  </div>
+
+  <div>
+    <div class="kicker">A syndicated sector panel · Nielsen for AI answer engines</div>
+    <h1>The panel <em>measures the sector.</em><br>Your read is <span class="u">yours alone.</span></h1>
+    <p class="lede">
+      One measurement infrastructure runs continuously across the Canadian telco sector — every brand, every ICP query, every AI surface. Participating carriers subscribe. Each subscriber gets a <strong>private read on their own visibility</strong>, plus the sector benchmark as it moves. The measurement is shared. The competitive intelligence, content interventions, and executive read are ring-fenced to the paying customer.
+    </p>
+
+    <div class="eng-grid">
+      <div class="eng-col">
+        <h3>What the panel measures · shared</h3>
+        <ul>
+          <li><div class="m">Brands</div><div class="t"><strong>TELUS, Bell, Rogers, Freedom, Videotron, Cogeco, SaskTel, Eastlink — plus flankers</strong><span>Koodo, Fido, Virgin, Public Mobile, Lucky, Chatr tracked as they surface</span></div></li>
+          <li><div class="m">Queries</div><div class="t"><strong>20 Canadian-telco ICP queries · verbatim across all brands</strong><span>Panel v1 · unbranded commercial-intent · reviewed quarterly with the customer group</span></div></li>
+          <li><div class="m">Surfaces</div><div class="t"><strong>ChatGPT · Gemini · Perplexity · Google AI Overview · Google AI Mode</strong><span>Automated Monday pulls · append-only tracking store · 90-day platform depth + our full history</span></div></li>
+          <li><div class="m">Cadence</div><div class="t"><strong>Weekly · every Monday · since July 17, 2026</strong><span>11 pulls on record · methodology and prompt registry disclosed to all subscribers</span></div></li>
+        </ul>
+      </div>
+      <div class="eng-col">
+        <h3>What TELUS gets · private</h3>
+        <ul>
+          <li><div class="m">Live</div><div class="t"><strong>Private TELUS dashboard</strong><span>Per-query score, sentiment, cited sources · your competitors' moves inside 24h</span></div></li>
+          <li><div class="m">Weekly</div><div class="t"><strong>Content interventions on your gap queries</strong><span>Published under TELUS · yours to keep · never shared with other subscribers</span></div></li>
+          <li><div class="m">Monthly</div><div class="t"><strong>Executive read to David, Katherine &amp; Kim</strong><span>One page · movement, wins, the thing to pay attention to</span></div></li>
+          <li><div class="m">Quarterly</div><div class="t"><strong>Panel benchmark report</strong><span>Anonymized sector movement · where you rank · where the market shifted</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="persona-row">
+      <div class="persona">
+        <div class="name">David Fuller</div>
+        <div class="role">President, Telco Division</div>
+        <div class="read"><span>The unified read — TELUS ranked inside the panel, one monthly page</span></div>
+      </div>
+      <div class="persona">
+        <div class="name">Katherine Emberley</div>
+        <div class="role">President, SMB</div>
+        <div class="read"><span>The growth surface — where SMB buyers ask and who answers</span></div>
+      </div>
+      <div class="persona">
+        <div class="name">Kim Nguyen</div>
+        <div class="read">VP, Digital &amp; Channels<br><span>The operating detail — live data, weekly working sessions</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">Panel deliverables · private dashboard · gap-query interventions · monthly executive read · quarterly benchmark</div>
+</section>
+
+<!-- ================= SLIDE 3 · TERMS + NEXT ================= -->
+<section class="slide" id="s3">
+  <div class="head">
+    <div class="brand"><img src="https://growthautomated.ai/favicon.ico" alt="" onerror="this.style.display='none'"><strong>Growth Automated</strong> · Pragmatic AEO</div>
+    <div><span class="num">03 / 03</span> · Terms &amp; next step</div>
+  </div>
+
+  <div>
+    <div class="kicker">Commercial terms · effective October 1, 2026</div>
+    <h1>A clean, <em>twelve-month</em> engagement.</h1>
+
+    <div class="terms">
+      <div class="terms-left">
+        <h3>Terms</h3>
+        <div class="term-line"><div class="l">Subscription</div><div class="v">CAD $10,000*<span style="font-size:12px;color:#B45309;font-weight:700"> * subject to scope</span> / month<small>Founding-subscriber rate · locked for the 12-month term regardless of list price · additions / removals priced separately in Doc #10A on 30-day notice</small></div></div>
+        <div class="term-line"><div class="l">Term</div><div class="v">12 months<small>Effective October 1, 2026 → September 30, 2027 · renewal by mutual consent</small></div></div>
+        <div class="term-line"><div class="l">Payment</div><div class="v">Net 30<small>Monthly invoice · first invoice October 1</small></div></div>
+        <div class="term-line"><div class="l">Panel model</div><div class="v">Syndicated across the sector<small>Bell, Rogers and others may also subscribe · methodology shared, private reads ring-fenced</small></div></div>
+        <div class="term-line"><div class="l">What's yours</div><div class="v">Your read + your interventions<small>Content under TELUS, your dashboard, your executive reads — never shared with other subscribers</small></div></div>
+        <div class="term-line"><div class="l">What's ours</div><div class="v">The panel infrastructure<small>Prompt registry, measurement store, sector benchmarks · disclosed to all subscribers</small></div></div>
+        <div class="term-line"><div class="l">Founding rights</div><div class="v">Quarterly input on panel v2<small>Founding subscribers shape the query set, brand ring and reporting cadence</small></div></div>
+        <div class="term-line"><div class="l">Termination</div><div class="v">60 days written<small>Either party · no early-termination fee after month 6</small></div></div>
+      </div>
+
+      <div class="next">
+        <h3>Next step</h3>
+        <p>Three documents move us from proposal to running engagement. The measurement layer stays live throughout — no gap in coverage.</p>
+        <ol>
+          <li><strong>Mutual NDA (Doc #01)</strong> — enables the full data unlock and any confidential context you want to share on TELUS's side. Growth Automated template · one-page.</li>
+          <li><strong>Master Services Agreement (Doc #08)</strong> — governs the relationship. Same MSA structure I've used with prior clients including MNTD.</li>
+          <li><strong>Statement of Work (Doc #10A)</strong> — the specifics on this slide, formalized. Effective October 1.</li>
+        </ol>
+        <a class="cta" href="https://seo-for-ai.growthautomated.ai/book_time" target="_blank" rel="noopener">Book time with Rahul →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">Rahul Sharma · Growth Automated · rahul@growthautomated.ai · Prepared September 14, 2026</div>
+</section>
+
+<script>
+  // Highlight active nav dot on scroll.
+  const dots = document.querySelectorAll('.nav a');
+  const slides = document.querySelectorAll('.slide');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const i = Array.from(slides).indexOf(e.target);
+        dots.forEach(d => d.classList.remove('on'));
+        if (dots[i]) dots[i].classList.add('on');
+      }
+    });
+  }, { threshold: 0.5 });
+  slides.forEach(s => io.observe(s));
+
+  // Keyboard nav — arrows / space / page keys.
+  document.addEventListener('keydown', e => {
+    const cur = Array.from(slides).findIndex(s => {
+      const r = s.getBoundingClientRect();
+      return r.top >= -window.innerHeight * 0.4 && r.top < window.innerHeight * 0.6;
+    });
+    if (cur < 0) return;
+    if (['ArrowDown','PageDown',' '].includes(e.key) && cur < slides.length - 1) {
+      e.preventDefault(); slides[cur + 1].scrollIntoView({ behavior: 'smooth' });
+    }
+    if (['ArrowUp','PageUp'].includes(e.key) && cur > 0) {
+      e.preventDefault(); slides[cur - 1].scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+</script>
+</body></html>

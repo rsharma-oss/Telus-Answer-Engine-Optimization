@@ -27,10 +27,22 @@ FULL_PAGES = ["index.html", "scorecard.html", "longitudinal.html"]
 NAV_ONLY   = ["full-report.html"]
 
 NAV_ITEMS = [
-    ("index.html",        "Overview",   "svg-home"),
-    ("scorecard.html",    "Scorecard",  "svg-card"),
-    ("full-report.html",  "Report",     "svg-report"),
-    ("longitudinal.html", "Trajectory", "svg-trend"),
+    ("index.html",        "Overview",   "svg-home", None),
+    ("scorecard.html",    "Scorecard",  "svg-card", [
+        ("scorecard.html",       "Aggregate scorecard",        "SCORECARD"),
+        ("katherine-smb.pdf",    "Katherine · SMB read",       "PDF"),
+        ("david-telco.pdf",      "David · Telco Division",     "PDF"),
+        ("kevin-cmo.pdf",        "Kevin · Brand narrative",    "PDF"),
+        ("kim-channels.pdf",     "Kim · Channel-specific",     "PDF"),
+        ("rob-consumer-marcom.pdf", "Rob · Consumer Marcom",     "PDF"),
+        ("jacob-organic.pdf",    "Jacob · Head of Organic",    "PDF"),
+        ("ip-map.pdf",           "What's proprietary · IP map","PDF"),
+        ("platform.pdf",         "What's proprietary · Platform","PDF"),
+        ("history.html",         "Weekly refresh · archive",   "HISTORY"),
+    ]),
+    # Report is now gated behind the NDA modal. Any click routes to the landing with a flag.
+    ("index.html?open=nda-modal",  "Report",     "svg-report", "LOCKED"),
+    ("longitudinal.html", "Trajectory", "svg-trend", None),
 ]
 
 ICONS = {
@@ -49,17 +61,28 @@ body { padding-top:0; }
   align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
   font-family:'Assistant','Inter',system-ui,-apple-system,sans-serif;
   border-bottom:3px solid #2D9C56; }
-#ga-brandbar .gb-mark { display:flex; align-items:center; gap:12px; }
-#ga-brandbar .gb-mark img { height:26px; width:auto; display:block; }
-#ga-brandbar .gb-name { font-weight:700; font-size:14px; letter-spacing:.02em; line-height:1.1; }
-#ga-brandbar .gb-name small { display:block; font-weight:400; font-size:10px;
-  letter-spacing:.14em; color:rgba(255,255,255,.72); text-transform:uppercase; margin-top:2px; }
+#ga-brandbar .gb-cobrand { display:flex; align-items:center; gap:14px; min-height:36px; }
+#ga-brandbar .gb-ga { height:28px; width:auto; display:block; }
+#ga-brandbar .gb-client-official { height:34px; width:auto; display:block; }
+#ga-brandbar .gb-client-card { display:inline-flex; flex-direction:column; align-items:flex-start;
+  padding:5px 12px; border:1px solid rgba(255,255,255,.28); border-radius:8px;
+  background:rgba(255,255,255,.05); line-height:1; }
+#ga-brandbar .gb-client-card .gb-client-kicker { font-family:'DM Mono','JetBrains Mono',monospace;
+  font-size:8.5px; font-weight:700; letter-spacing:.20em; text-transform:uppercase;
+  color:rgba(255,255,255,.62); margin-bottom:3px; }
+#ga-brandbar .gb-client-card .gb-client-name { font-family:'Assistant','Helvetica Neue',system-ui,sans-serif;
+  font-weight:800; font-size:18px; letter-spacing:.10em; color:#fff; }
+#ga-brandbar .gb-sub { font-size:10.5px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  color:rgba(255,255,255,.62); padding-left:12px; margin-left:4px;
+  border-left:1px solid rgba(255,255,255,.20); }
 #ga-brandbar .gb-right { display:flex; align-items:center; gap:14px; font-size:11.5px;
   color:rgba(255,255,255,.85); font-family:'DM Mono',monospace; }
 #ga-brandbar .gb-chip { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16);
   padding:5px 10px; border-radius:20px; letter-spacing:.06em; }
+@media (max-width:820px) { #ga-brandbar .gb-sub { display:none; } }
 @media (max-width:700px) { #ga-brandbar { padding:10px 18px; }
-  #ga-brandbar .gb-right { font-size:10.5px; gap:8px; } }
+  #ga-brandbar .gb-right { font-size:10.5px; gap:8px; }
+  #ga-brandbar .gb-client { height:28px; } #ga-brandbar .gb-ga { height:22px; } }
 
 #ga-nav { position:fixed; top:76px; left:50%; transform:translateX(-50%); z-index:9998;
   background:var(--ga-carbon); color:#fff; padding:5px; border-radius:999px;
@@ -74,6 +97,33 @@ body { padding-top:0; }
 #ga-nav a.current { background:var(--ga-blue); color:#fff; }
 #ga-nav a.current:hover { background:var(--ga-blue); }
 #ga-nav svg { flex-shrink:0; }
+#ga-nav a.locked .lock-glyph { font-size:10px; margin-left:2px; opacity:.72; }
+#ga-nav a.locked:hover { background:rgba(180,83,9,.24); color:#fff; }
+#ga-nav .caret { opacity:.55; margin-left:1px; transition:transform .15s ease; pointer-events:none; }
+#ga-nav .nav-group { position:relative; display:inline-flex; }
+#ga-nav .nav-group > a { cursor:pointer; }
+#ga-nav .nav-group.current > a { background:var(--ga-blue); color:#fff; }
+#ga-nav .nav-group:hover .caret, #ga-nav .nav-group:focus-within .caret { transform:rotate(180deg); opacity:1; }
+/* Dropdown sits 8px below trigger — invisible ::before bridges the gap so hover survives cursor traversal */
+#ga-nav .nav-dropdown { position:absolute; top:calc(100% + 8px); left:50%; transform:translateX(-50%) translateY(-6px);
+  min-width:280px; background:#1B1B24; color:#fff; border-radius:12px; padding:6px;
+  box-shadow:0 20px 40px rgba(0,0,0,.4), 0 4px 12px rgba(0,0,0,.2);
+  border:1px solid rgba(255,255,255,.08);
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .15s ease, transform .15s ease, visibility .15s ease;
+  display:flex; flex-direction:column; gap:1px; }
+#ga-nav .nav-dropdown::before { content:""; position:absolute; left:0; right:0; top:-10px; height:10px; background:transparent; }
+#ga-nav .nav-group:hover .nav-dropdown, #ga-nav .nav-group:focus-within .nav-dropdown {
+  opacity:1; visibility:visible; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+#ga-nav .nav-dropdown a { padding:9px 14px; border-radius:8px;
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
+  color:rgba(255,255,255,.82); font-size:12.5px; font-weight:600; }
+#ga-nav .nav-dropdown a:hover { background:rgba(255,255,255,.08); color:#fff; }
+#ga-nav .nav-dropdown a .lbl { flex:1; text-align:left; }
+#ga-nav .nav-dropdown a .kind { font-family:'DM Mono',monospace; font-size:9.5px;
+  color:var(--ga-green); background:rgba(45,156,86,.12); border:1px solid rgba(45,156,86,.28);
+  padding:2px 7px; border-radius:4px; letter-spacing:.08em; font-weight:800; }
+#ga-nav .nav-dropdown a.primary .kind { color:#7C93E0; background:rgba(51,79,180,.14); border-color:rgba(51,79,180,.32); }
 @media (max-width:700px) {
   #ga-nav { top:62px; padding:4px; font-size:0; }
   #ga-nav a { padding:8px; }
@@ -103,11 +153,24 @@ def brandbar_html(current):
         "full-report.html":  ("Report",     "Interactive AI visibility report"),
     }
     label, sub = label_by_page.get(current, ("", ""))
+    # If assets/telus-official.svg exists, use it (client-supplied official mark).
+    # Otherwise render a neutral "PREPARED FOR" text card — no fabricated corporate mark.
+    telus_official = (REPO / "assets" / "telus-official.svg")
+    if telus_official.exists():
+        client_html = f'<img class="gb-client-official" src="assets/telus-official.svg" alt="TELUS">'
+    else:
+        client_html = (
+            '<span class="gb-client-card" aria-label="Prepared for TELUS">'
+            '<span class="gb-client-kicker">Prepared for</span>'
+            '<span class="gb-client-name">TELUS</span>'
+            '</span>'
+        )
     return (
         '<div id="ga-brandbar" role="banner">'
-        '<div class="gb-mark">'
-        '<img src="assets/ga-logo-white.svg" alt="Growth Automated">'
-        '<div class="gb-name">Growth Automated<small>Pragmatic AEO · Prepared for TELUS</small></div>'
+        '<div class="gb-cobrand">'
+        '<img class="gb-ga" src="assets/ga-logo-white.svg" alt="Growth Automated">'
+        f'{client_html}'
+        '<span class="gb-sub" aria-hidden="true">Panel engagement · report hub</span>'
         '</div>'
         '<div class="gb-right">'
         f'<span class="gb-chip">{label}</span>'
@@ -119,12 +182,43 @@ def brandbar_html(current):
 
 def nav_html(current):
     items = []
-    for href, label, icon_key in NAV_ITEMS:
-        is_cur = (href == current)
-        attrs = ' class="current" aria-current="page"' if is_cur else ""
-        items.append(f'<a href="{href}"{attrs} aria-label="{label}">'
-                     f'{ICONS[icon_key]}<span>{label}</span></a>')
-    return '<nav id="ga-nav" role="navigation" aria-label="Report sections">' + "".join(items) + '</nav>' 
+    for href, label, icon_key, extra in NAV_ITEMS:
+        is_cur = (href == current) or (extra and isinstance(extra, list) and any(current == c[0] for c in extra))
+        classes = ["current"] if is_cur else []
+        if extra == "LOCKED":
+            classes.append("locked")
+        if isinstance(extra, list):
+            classes.append("has-children")
+        cls_attr = f' class="{" ".join(classes)}"' if classes else ""
+        cur_attr = ' aria-current="page"' if is_cur else ""
+
+        if extra == "LOCKED":
+            # Report nav — navigate to landing and open modal on arrival
+            link = (f'<a href="{href}"{cls_attr}{cur_attr} aria-label="{label} (NDA required)">'
+                    f'{ICONS[icon_key]}<span>{label}</span>'
+                    f'<span class="lock-glyph" aria-hidden="true">🔒</span></a>')
+            items.append(link)
+        elif isinstance(extra, list):
+            # Dropdown parent + children
+            child_items = "".join(
+                f'<a class="{"pdf" if kind == "PDF" else "primary"}" href="{chref}"'
+                f'{" target=\"_blank\"" if kind == "PDF" else ""}>'
+                f'<span class="lbl">{clabel}</span>'
+                f'<span class="kind">{kind}</span></a>'
+                for chref, clabel, kind in extra
+            )
+            link = (f'<div class="nav-group{" current" if is_cur else ""}">'
+                    f'<a href="{href}"{cls_attr}{cur_attr} aria-label="{label}" aria-haspopup="true">'
+                    f'{ICONS[icon_key]}<span>{label}</span>'
+                    f'<svg class="caret" viewBox="0 0 12 12" width="9" height="9" fill="currentColor"><path d="M2 4l4 4 4-4z"/></svg>'
+                    f'</a>'
+                    f'<div class="nav-dropdown" role="menu">{child_items}</div>'
+                    f'</div>')
+            items.append(link)
+        else:
+            items.append(f'<a href="{href}"{cls_attr}{cur_attr} aria-label="{label}">'
+                         f'{ICONS[icon_key]}<span>{label}</span></a>')
+    return '<nav id="ga-nav" role="navigation" aria-label="Report sections">' + "".join(items) + '</nav>'
 
 
 def credit_html():

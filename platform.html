@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>What Makes Our Platform Proprietary · Growth Automated</title>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/scorecard-ga.css">
+<style>
+  /* ---------- Page frame ---------- */
+  .wrap{padding-top:0 !important;padding-bottom:0 !important;padding-left:26px !important;padding-right:26px !important}
+  @media print{
+    html,body{height:auto !important}
+    .wrap{padding-bottom:0 !important}
+    .hero,.scale,.caps,.roadmap,.cta,.foot{page-break-inside:avoid;break-inside:avoid}
+  }
+
+  /* ---------- Custom mast (GA logo top-right) ---------- */
+  .plat-mast{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:12px 22px 14px !important}
+  .plat-mast-l{display:flex;align-items:baseline;gap:16px;min-width:0}
+  .plat-mast-l .plat-tag{font-family:'DM Mono',monospace;font-size:10px;font-weight:800;letter-spacing:.24em;color:#66E894;padding:4px 9px;border:1px solid rgba(102,232,148,.36);border-radius:4px;background:rgba(45,156,86,.08)}
+  .plat-mast-l .plat-doc{font-family:'Assistant',sans-serif;font-weight:800;font-size:15px;line-height:1.15;color:#fff;letter-spacing:-.01em}
+  .plat-mast-r{display:flex;align-items:center;gap:12px}
+  .plat-mast-r .plat-ga{height:32px;width:auto;display:block}
+  .plat-mast-r .plat-brand{font-family:'Assistant',sans-serif;font-weight:800;font-size:14px;color:#fff;letter-spacing:-.01em;line-height:1.1;text-align:right;padding-left:12px;border-left:1px solid rgba(255,255,255,.20)}
+  .plat-mast-r .plat-brand small{display:block;font-weight:500;font-size:9.5px;letter-spacing:.16em;color:rgba(255,255,255,.62);text-transform:uppercase;margin-top:3px}
+
+  /* ---------- CTA band ---------- */
+  .cta{margin-top:6px;background:linear-gradient(90deg,#334FB4 0%,#2643a0 100%);color:#fff;border-radius:12px;padding:8px 18px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;overflow:hidden;box-shadow:0 6px 14px -6px rgba(51,79,180,.35)}
+  .cta::before{content:"";position:absolute;top:-40px;right:-40px;width:360px;height:180px;background:radial-gradient(circle at top right,rgba(102,232,148,.28),transparent 65%);pointer-events:none}
+  .cta .cta-lede{position:relative;font-family:'Assistant',sans-serif;font-weight:700;font-size:13.5px;line-height:1.35;color:#fff;letter-spacing:-.005em;max-width:960px}
+  .cta .cta-lede b{color:#66E894;font-weight:800}
+  .cta .cta-terms{font-family:'DM Mono',monospace;font-weight:600;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.62);margin-left:2px}
+  .cta .cta-btn{position:relative;font-family:'Assistant',sans-serif;font-weight:800;font-size:13px;letter-spacing:-.005em;color:#334FB4;background:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;white-space:nowrap;box-shadow:0 4px 10px -4px rgba(0,0,0,.30);display:inline-flex;align-items:center;gap:8px;transition:transform .15s ease}
+  .cta .cta-btn::after{content:"\2192";font-weight:800}
+  .cta .cta-mail{position:relative;font-family:'DM Mono',monospace;font-size:10.5px;color:rgba(255,255,255,.78);text-decoration:none;padding-right:8px;letter-spacing:.02em}
+  .cta .cta-mail:hover{color:#fff}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:9px 0 6px}
+  .hero .kicker{display:inline-flex;align-items:center;gap:9px;font-family:'Assistant',sans-serif;font-size:9.5px;font-weight:800;letter-spacing:.20em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+  .hero .kicker::before{content:"";width:22px;height:2.5px;background:var(--blue);border-radius:3px}
+  .hero .kicker .dot{width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block}
+  .hero .kicker .ttag{color:var(--green);font-weight:800}
+  .hero h1{font-family:'Assistant',sans-serif;font-weight:800;font-size:28px;line-height:1.08;letter-spacing:-.02em;color:var(--ink);margin:0 0 7px;max-width:none}
+  .hero h1 em{font-style:normal;color:var(--blue)}
+  .hero h1 .u{border-bottom:4px solid var(--green);padding-bottom:1px}
+  .hero .tag{display:inline-flex;align-items:baseline;gap:14px;font-family:'Assistant',sans-serif;font-weight:800;font-size:15px;color:var(--ink);letter-spacing:-.01em;padding:7px 14px;border-radius:8px;background:linear-gradient(90deg,rgba(45,156,86,.09) 0%,rgba(51,79,180,.06) 55%,transparent 100%);border-left:3px solid var(--green)}
+  .hero .tag b{color:var(--green);font-weight:800}
+  .hero .tag i{font-style:normal;color:var(--muted);font-weight:500;font-size:12px;letter-spacing:0}
+
+  /* ---------- Scale strip (numbers at top — the punch) ---------- */
+  .scale{margin-top:8px;background:linear-gradient(135deg,#0F0F18 0%,#191926 100%);color:#fff;border-radius:14px;padding:11px 22px 10px;position:relative;overflow:hidden;border-top:3px solid var(--green)}
+  .scale::before{content:"";position:absolute;top:-40px;right:-60px;width:520px;height:260px;background:radial-gradient(circle at top right,rgba(45,156,86,.30),transparent 62%)}
+  .scale-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;position:relative}
+  .scale-head .k{font-family:'Assistant',sans-serif;font-weight:800;font-size:10px;color:#66E894;letter-spacing:.20em;text-transform:uppercase;display:inline-flex;align-items:center;gap:9px}
+  .scale-head .k::before{content:"";width:22px;height:2.5px;background:#66E894;border-radius:3px}
+  .scale-head .k b{color:#fff;font-weight:800;margin-left:4px;text-transform:none;letter-spacing:-.01em;font-size:14px}
+  .scale-head .as-of{font-family:'DM Mono',monospace;font-size:9.5px;color:rgba(255,255,255,.52);letter-spacing:.10em;text-transform:uppercase}
+  .scale-tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:18px;position:relative}
+  .scale-tile .v{font-family:'Assistant',sans-serif;font-weight:800;font-size:28px;color:#fff;line-height:1;letter-spacing:-.02em}
+  .scale-tile .v small{font-size:14px;color:#66E894;font-weight:800;margin-left:2px}
+  .scale-tile .l{font-family:'Assistant',sans-serif;font-weight:700;font-size:10.5px;color:rgba(255,255,255,.88);margin-top:5px;line-height:1.25;letter-spacing:-.005em}
+  .scale-tile .s{font-family:'DM Mono',monospace;font-weight:600;font-size:8.5px;color:rgba(255,255,255,.48);letter-spacing:.08em;text-transform:uppercase;margin-top:2px;line-height:1.3}
+
+  /* ---------- Capability grid ---------- */
+  .caps{margin-top:9px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .cap{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px 11px;position:relative;box-shadow:var(--shadow-sm)}
+  .cap::before{content:"";position:absolute;top:0;left:14px;right:14px;height:3px;background:var(--blue);border-radius:0 0 2px 2px}
+  .cap.a::before{background:var(--green)}
+  .cap.b::before{background:var(--blue)}
+  .cap.c::before{background:var(--amber)}
+  .cap .num{font-family:'DM Mono',monospace;font-size:9px;font-weight:800;color:var(--muted);letter-spacing:.14em;margin-bottom:3px}
+  .cap h3{font-family:'Assistant',sans-serif;font-weight:800;font-size:14px;color:var(--ink);letter-spacing:-.015em;line-height:1.2;margin:0 0 3px}
+  .cap .lead{font-family:'Assistant',sans-serif;font-weight:700;font-size:11px;line-height:1.35;margin:0 0 5px;letter-spacing:-.005em}
+  .cap.a .lead{color:var(--green)}
+  .cap.b .lead{color:var(--blue)}
+  .cap.c .lead{color:var(--amber)}
+  .cap p{font-size:10.5px;color:var(--slate);line-height:1.42;margin:0}
+  .cap p strong{color:var(--ink);font-weight:700}
+  .cap .chips{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
+  .cap .chip-eng{font-family:'Assistant',sans-serif;font-size:8.5px;font-weight:800;color:var(--ink);background:rgba(45,156,86,.08);border:1px solid rgba(45,156,86,.24);padding:2px 6px;border-radius:4px;letter-spacing:.02em}
+
+  /* ---------- Roadmap ---------- */
+  .roadmap{margin-top:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 16px 9px;position:relative}
+  .roadmap::before{content:"";position:absolute;top:0;left:16px;right:16px;height:3px;background:var(--amber);border-radius:0 0 2px 2px}
+  .rm-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+  .rm-head .k{font-family:'Assistant',sans-serif;font-weight:800;font-size:10px;color:var(--amber);letter-spacing:.20em;text-transform:uppercase;display:inline-flex;align-items:center;gap:9px}
+  .rm-head .k::before{content:"";width:22px;height:2.5px;background:var(--amber);border-radius:3px}
+  .rm-head .k b{color:var(--ink);font-weight:800;margin-left:4px;text-transform:none;letter-spacing:-.01em;font-size:14px}
+  .rm-head .sub{font-family:'Assistant',sans-serif;font-size:11px;color:var(--slate-2);font-weight:600}
+  .rm-items{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .rm-item{display:flex;flex-direction:column;gap:2px;padding:2px 0 2px 12px;border-left:2px solid var(--amber)}
+  .rm-item.live{border-left-color:var(--green)}
+  .rm-item .state{font-family:'DM Mono',monospace;font-size:8.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
+  .rm-item.live .state{color:var(--green)}
+  .rm-item .t{font-family:'Assistant',sans-serif;font-weight:800;font-size:12px;color:var(--ink);line-height:1.18;letter-spacing:-.01em}
+  .rm-item .why{font-size:10px;color:var(--slate);line-height:1.35}
+
+  /* ---------- Foot ---------- */
+  .foot{font-family:'Assistant',sans-serif;font-size:9.5px;color:var(--muted);letter-spacing:.05em;font-weight:600;padding-top:4px;margin-top:5px;display:flex;justify-content:space-between;align-items:baseline}
+  .foot strong{color:var(--ink);font-weight:800}
+  .foot .brand{color:var(--blue);font-weight:800}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<div class="mast plat-mast">
+  <div class="plat-mast-l">
+    <div class="plat-tag">PLATFORM</div>
+    <div class="plat-doc">What makes our platform<br>proprietary.</div>
+  </div>
+  <div class="plat-mast-r">
+    <img src="assets/ga-logo-white.svg" alt="Growth Automated" class="plat-ga">
+    <div class="plat-brand">Growth Automated<small>Pragmatic AEO</small></div>
+  </div>
+</div>
+
+<!-- ============ HERO (no TELUS kicker) ============ -->
+<div class="hero">
+  <div class="kicker"><span class="dot"></span> What's proprietary &middot; <span class="ttag">the technical layer</span></div>
+  <h1>Our platform is <em>built for this</em>.<br><span class="u">Daily fuel. Weekly reads.</span></h1>
+  <div class="tag"><b>Daily data</b> feeds <b>weekly analytics</b>. <i>Engine runs 7&times;/wk &middot; your panel brief lands every Monday.</i></div>
+</div>
+
+<!-- ============ SCALE (moved to top — the punch) ============ -->
+<div class="scale">
+  <div class="scale-head">
+    <div class="k">Production scale &nbsp;<b>What the measurement engine has already captured</b></div>
+    <div class="as-of">Live &middot; since Aug 2025</div>
+  </div>
+  <div class="scale-tiles">
+    <div class="scale-tile">
+      <div class="v">3.9<small>M</small></div>
+      <div class="l">AI answers collected</div>
+      <div class="s">~15K new per day</div>
+    </div>
+    <div class="scale-tile">
+      <div class="v">41<small>M</small></div>
+      <div class="l">Source citations tracked</div>
+      <div class="s">19M URL-level records</div>
+    </div>
+    <div class="scale-tile">
+      <div class="v">12.9<small>M</small></div>
+      <div class="l">Mention scores</div>
+      <div class="s">Brand + every competitor</div>
+    </div>
+    <div class="scale-tile">
+      <div class="v">7</div>
+      <div class="l">AI engines queried daily</div>
+      <div class="s">ChatGPT &middot; Gemini &middot; Claude &middot; +4</div>
+    </div>
+    <div class="scale-tile">
+      <div class="v">1,850<small>+</small></div>
+      <div class="l">Brands tracked</div>
+      <div class="s">40 countries &middot; 22 languages</div>
+    </div>
+    <div class="scale-tile">
+      <div class="v">41.9<small>K</small></div>
+      <div class="l">Prompts tracked</div>
+      <div class="s">8.9K competitors on file</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CAPABILITY GRID (3 columns, no tier chrome) ============ -->
+<div class="caps">
+  <div class="cap a">
+    <div class="num">01</div>
+    <h3>Measurement pipeline</h3>
+    <div class="lead">Every model. Every day. Every answer stored.</div>
+    <p>Real ICP questions go to <strong>seven answer engines</strong> daily. Every answer is captured verbatim, then scored for mention presence, rank, sentiment, and cited sources &mdash; for TELUS and every competitor. Rolls up into visibility by prompt &middot; domain &middot; exact URL &middot; competitor. <strong>Append-only history</strong> that can't be rebuilt after the fact.</p>
+    <div class="chips">
+      <span class="chip-eng">ChatGPT</span>
+      <span class="chip-eng">Google AIO</span>
+      <span class="chip-eng">AI Mode</span>
+      <span class="chip-eng">Gemini</span>
+      <span class="chip-eng">Perplexity</span>
+      <span class="chip-eng">Claude</span>
+      <span class="chip-eng">Copilot</span>
+    </div>
+  </div>
+
+  <div class="cap b">
+    <div class="num">02</div>
+    <h3>Analytics + activation</h3>
+    <div class="lead">Finding &rarr; step-by-step plan.</div>
+    <p><strong>Gap analysis</strong> diffs your citation set against competitors', by prompt and by source. Each gap becomes a <strong>step-by-step action plan</strong> a team can execute against &mdash; not a metric, an assignment. <strong>Location tracking</strong> is national plus <strong>city &amp; region</strong> for Google AIO / AI Mode &mdash; directly relevant to TELUS regional footprint.</p>
+  </div>
+
+  <div class="cap c">
+    <div class="num">03</div>
+    <h3>Delivery surfaces</h3>
+    <div class="lead">Meet your teams where they already work.</div>
+    <p><strong>REST API</strong> &middot; <strong>MCP server</strong> so Claude and ChatGPT query the data directly in the tools your teams use &middot; <strong>Looker Studio connector</strong> &middot; <strong>Google Search Console + GA4 blending</strong> &middot; <strong>white-label shareable report links</strong> for stakeholders who don't log in.</p>
+  </div>
+</div>
+
+<!-- ============ ROADMAP ============ -->
+<div class="roadmap">
+  <div class="rm-head">
+    <div class="k">Roadmap &nbsp;<b>What ships next &mdash; already funded, already scoped</b></div>
+    <div class="sub">Canada is the platform's <strong>#2 market</strong> by brands tracked (99).</div>
+  </div>
+  <div class="rm-items">
+    <div class="rm-item live">
+      <div class="state">Live</div>
+      <div class="t">City &amp; region tracking</div>
+      <div class="why">Google AIO + AI Mode &middot; local scoreboards for the TELUS regional footprint.</div>
+    </div>
+    <div class="rm-item live">
+      <div class="state">Live</div>
+      <div class="t">Canada as #2 market</div>
+      <div class="why">99 Canadian brands tracked &mdash; the foundation the syndicate builds on for the Big Three view.</div>
+    </div>
+    <div class="rm-item">
+      <div class="state">Next</div>
+      <div class="t">Audience segment tracking</div>
+      <div class="why">Which <strong>buyer type</strong> you win or lose with &mdash; SMB &middot; consumer &middot; enterprise, at the query level.</div>
+    </div>
+    <div class="rm-item">
+      <div class="state">Next</div>
+      <div class="t">Actions module</div>
+      <div class="why">Finding &rarr; approved client work &rarr; <strong>measure what changed</strong>. Closes the loop from insight to outcome.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CTA ============ -->
+<div class="cta">
+  <div class="cta-lede">
+    Ready to see the <b>Canadian telco AEO panel</b> for yourself? &nbsp;<span class="cta-terms">Founding subscriber terms open &middot; 9 seats &middot; Monday reads begin the week you sign</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;position:relative">
+    <a class="cta-mail" href="mailto:rahul@growthautomated.ai?subject=Canadian%20Telco%20AEO%20Panel">rahul@growthautomated.ai</a>
+    <a class="cta-btn" href="https://seo-for-ai.growthautomated.ai/book_time" target="_blank" rel="noopener">Book time with Rahul</a>
+  </div>
+</div>
+
+
+</div>
+</body></html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Weekly Refresh Archive · TELUS AEO Panel · Growth Automated</title>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#334FB4;--green:#2D9C56;--amber:#B45309;--ink:#121212;--slate:#3F3F46;--slate-2:#52525B;--muted:#71717A;--line:#E4E4E7;--line-soft:#F3F4F6;--surface:#FFFFFF;--wash:#F8FAFC;--wash2:#F1F5F9;}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Assistant',system-ui,sans-serif;background:var(--wash2);color:var(--ink);line-height:1.5;font-size:14px}
+.page{max-width:1200px;margin:0 auto;padding:36px 40px 60px}
+.hero{background:linear-gradient(135deg,#0F0F18 0%,#191926 100%);color:#fff;border-radius:16px;padding:32px 36px;margin-bottom:28px;position:relative;overflow:hidden;border-top:3px solid var(--green)}
+.hero::after{content:'';position:absolute;right:-60px;top:-60px;width:360px;height:360px;background:radial-gradient(circle,rgba(45,156,86,.24),transparent 60%)}
+.hero .kicker{position:relative;font-family:'DM Mono',monospace;font-size:11px;font-weight:800;letter-spacing:.24em;color:#66E894;margin-bottom:10px;text-transform:uppercase;display:inline-flex;align-items:center;gap:10px}
+.hero .kicker::before{content:'';width:22px;height:2.5px;background:#66E894;border-radius:3px}
+.hero h1{position:relative;font-family:'Assistant',sans-serif;font-size:32px;font-weight:800;letter-spacing:-.02em;margin:0 0 10px;line-height:1.1}
+.hero h1 em{font-style:normal;color:#B8CBFF}
+.hero p{position:relative;font-size:15px;color:rgba(255,255,255,.75);margin:0;max-width:820px;line-height:1.55}
+.hero p strong{color:#fff;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.stat .v{font-family:'Assistant',sans-serif;font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;line-height:1}
+.stat .v small{font-size:14px;color:var(--muted);font-weight:600;margin-left:2px}
+.stat .l{font-family:'DM Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-top:6px}
+.wk{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.wk-head{display:flex;justify-content:space-between;align-items:baseline;padding:16px 22px;background:linear-gradient(to right,rgba(51,79,180,.04),transparent);border-bottom:1px solid var(--line)}
+.wk-h-l{display:flex;align-items:baseline;gap:16px}
+.wk-tag{font-family:'DM Mono',monospace;font-size:10px;font-weight:800;letter-spacing:.14em;color:var(--blue);text-transform:uppercase}
+.wk-date{font-family:'Assistant',sans-serif;font-weight:800;font-size:20px;color:var(--ink);letter-spacing:-.01em}
+.wk-h-r{font-size:12px;color:var(--muted);font-weight:600;font-style:italic}
+.wk-body{padding:14px 22px 18px}
+.wk-note{font-size:13px;color:var(--slate);line-height:1.55;margin:0 0 14px;padding:10px 14px;background:var(--wash);border-radius:8px;border-left:3px solid var(--blue)}
+.wk-note.up{border-left-color:var(--green)} .wk-note.down{border-left-color:#DC2626}
+.wk-note strong{color:var(--ink);font-weight:700}
+.pdfs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pdf-row{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--wash);border-radius:8px;text-decoration:none;color:var(--ink);border:1px solid transparent;transition:border-color .15s,background .15s}
+.pdf-row:hover{background:#fff;border-color:var(--blue)}
+.pdf-row .name{font-family:'Assistant',sans-serif;font-weight:700;font-size:12.5px;color:var(--ink);letter-spacing:-.005em}
+.pdf-row .name small{display:block;font-family:'DM Mono',monospace;font-weight:600;font-size:9.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+.pdf-row .kind{font-family:'DM Mono',monospace;font-size:9.5px;font-weight:800;letter-spacing:.10em;color:var(--green);background:rgba(45,156,86,.10);border:1px solid rgba(45,156,86,.28);padding:3px 8px;border-radius:4px;text-transform:uppercase}
+.pdf-row.new .kind{color:var(--blue);background:rgba(51,79,180,.10);border-color:rgba(51,79,180,.28)}
+.legacy{padding:18px 22px;background:var(--wash);border:1px dashed var(--line);border-radius:10px;font-size:13px;color:var(--slate);line-height:1.6}
+.legacy strong{color:var(--ink);font-weight:700}
+.footlink{display:inline-block;margin-top:22px;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);text-decoration:none;padding:8px 14px;border:1px solid var(--blue);border-radius:6px}
+.footlink:hover{background:var(--blue);color:#fff}
+@media(max-width:820px){.stats{grid-template-columns:repeat(2,1fr)}.pdfs{grid-template-columns:1fr}.hero h1{font-size:24px}.page{padding:20px}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hero">
+  <div class="kicker">● TELUS AEO Panel · Weekly Refresh Archive</div>
+  <h1>Every weekly refresh, <em>stamped and addressable.</em></h1>
+  <p>This is the durable archive of every Monday-morning panel refresh — one folder per week, one PDF per audience, one stable URL that never gets overwritten. Bookmark any row below and it points to that specific week's read for the rest of the engagement. The live URLs (<strong>/katherine-smb.pdf</strong> etc.) always show the latest; the archive URLs (<strong>/archive/katherine-smb-2026-09-28.pdf</strong>) are frozen.</p>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="v">13</div><div class="l">Weekly pulls on record</div></div>
+  <div class="stat"><div class="v">2,720</div><div class="l">Runs · latest week</div></div>
+  <div class="stat"><div class="v">5</div><div class="l">AI models tracked</div></div>
+  <div class="stat"><div class="v">20</div><div class="l">ICP queries per pull</div></div>
+</div>
+
+<!-- WEEKS:START -->
+<!-- WEEK 13 -->
+<div class="wk">
+  <div class="wk-head">
+    <div class="wk-h-l">
+      <div class="wk-tag">Week 13 · Latest</div>
+      <div class="wk-date">Sept 28, 2026</div>
+    </div>
+    <div class="wk-h-r">First refresh with WoW insights band + Rob/Jacob added</div>
+  </div>
+  <div class="wk-body">
+    <p class="wk-note up"><strong>Panel-wide TELUS held at 69/100.</strong> Business-owner sentiment recovered 95 → 100 (watch cleared); activation-fee sentiment moved 43 → 53 (+10, category signal moving our way). Home-internet defence slipped 99 → 94 (new watch). Bundle-signup slipped 55 → 42 (−13, transactional weakness). Bell climbing 34 → 46 daily in Rogers's mobile panel — cross-panel divergence says Bell shipped something mobile-shaped.</p>
+    <div class="pdfs">
+      <a class="pdf-row" href="archive/katherine-smb-2026-09-28.pdf" target="_blank"><span class="name">Katherine · SMB read<small>President, TELUS SMB</small></span><span class="kind">PDF</span></a>
+      <a class="pdf-row" href="archive/kevin-cmo-2026-09-28.pdf" target="_blank"><span class="name">Kevin · Brand narrative<small>Chief Marketing Officer</small></span><span class="kind">PDF</span></a>
+      <a class="pdf-row" href="archive/david-telco-2026-09-28.pdf" target="_blank"><span class="name">David · Telco Division<small>President, Telco Division</small></span><span class="kind">PDF</span></a>
+      <a class="pdf-row" href="archive/kim-channels-2026-09-28.pdf" target="_blank"><span class="name">Kim · Channel-specific<small>VP, Digital &amp; Channels</small></span><span class="kind">PDF</span></a>
+      <a class="pdf-row new" href="archive/rob-consumer-marcom-2026-09-28.pdf" target="_blank"><span class="name">Rob · Consumer Marcom<small>Director, Consumer Marcom · NEW</small></span><span class="kind">PDF</span></a>
+      <a class="pdf-row new" href="archive/jacob-organic-2026-09-28.pdf" target="_blank"><span class="name">Jacob · Organic Ops<small>Head of Organic · NEW</small></span><span class="kind">PDF</span></a>
+    </div>
+  </div>
+</div>
+
+<!-- WEEK 12 -->
+<div class="wk">
+  <div class="wk-head">
+    <div class="wk-h-l">
+      <div class="wk-tag">Week 12</div>
+      <div class="wk-date">Sept 21, 2026</div>
+    </div>
+    <div class="wk-h-r">Baseline for the four exec engagements</div>
+  </div>
+  <div class="wk-body">
+    <p class="wk-note">TELUS 69/100. Bell 34, Rogers 34, Freedom 10, Videotron 3, Cogeco 2. First week the four exec-shaped reads (Katherine · Kevin · David · Kim) shipped. Business-owner sentiment on the watch list (95, drifting from 97 in July). Bell +2 over six weeks. Freedom drifting down.</p>
+    <div class="pdfs">
+      <a class="pdf-row" href="archive/katherine-smb-2026-09-21.pdf" target="_blank"><span class="name">Katherine · SMB read<small>President, TELUS SMB</small></span><span class="kind">PDF</span></a>
+      <a class="pdf-row" href="archive/kevin-cmo-2026-09-21.pdf" target="_blank"><span class="name">Kevin · Brand narrative<small>Chief Marketing Officer</small></span><span class="kind">PDF</span></a>
+      <a class="pdf-row" href="archive/david-telco-2026-09-21.pdf" target="_blank"><span class="name">David · Telco Division<small>President, Telco Division</small></span><span class="kind">PDF</span></a>
+      <a class="pdf-row" href="archive/kim-channels-2026-09-21.pdf" target="_blank"><span class="name">Kim · Channel-specific<small>VP, Digital &amp; Channels</small></span><span class="kind">PDF</span></a>
+    </div>
+  </div>
+</div>
+
+<!-- WEEKS:END -->
+
+<!-- WEEKS 1-11 -->
+<div class="legacy">
+  <strong>Weeks 1–11 (Jul 17 → Sep 14, 2026):</strong> Panel-refresh data is intact in the append-only tracking store — the trajectory chart on <strong>/longitudinal.html</strong> renders directly from it, and any specific week's exec-shaped read can be regenerated on request. Backfill PDFs weren't stamped at the time; the store is authoritative.
+</div>
+
+<a class="footlink" href="index.html">← Back to overview</a>
+
+</div>
+</body>
+</html>

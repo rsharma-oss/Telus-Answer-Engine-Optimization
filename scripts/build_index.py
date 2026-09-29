@@ -48,12 +48,13 @@ def main():
         # Plain span — the whole card is already an <a>, and HTML5 forbids nested anchors.
         md_note = (f' The first dated snapshot (<span style="color:#10B981;font-weight:600">'
                    f'{pretty(md_date)}</span>) is kept for reference.')
-    card = (f'<a class="link-card" href="data/longitudinal/telus.jsonl">\n'
-            f'      <div class="link-kicker">DATA</div>\n'
+    card = (f'<a class="link-card locked" href="#" onclick="event.preventDefault();document.getElementById(\'nda-modal\').classList.add(\'open\');return false">\n'
+            f'      <div class="link-kicker" style="color:#B45309">🔒 DATA · NDA REQUIRED</div>\n'
             f'      <div class="link-title">Tracking store · {len(api)} pulls to {pretty(d)}</div>\n'
-            f'      <div class="link-body">Append-only machine-readable record of every pull — scores, per-model '
-            f'breakdown, prompt matrix, competitors and citations. Every page on this site is generated from it.'
-            f'{md_note}</div>\n    </a>')
+            f'      <div class="link-body">The append-only machine-readable record — scores, per-model breakdown, '
+            f'prompt matrix, competitors and citations — is <strong>gated to subscribers under NDA</strong>. '
+            f'Every page on this site is generated from it, but the raw store itself moves through the commercial '
+            f'process. <span style="color:#334FB4;font-weight:700">Open the process →</span></div>\n    </a>')
 
     # Stat strip tiles — regenerated from the same source as the hero.
     models = a.get("models", {})

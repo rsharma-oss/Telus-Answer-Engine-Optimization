@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>TELUS · Meeting 01 · Prepared for Rob Daintree &amp; Jacob Hewlett-Case</title>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/scorecard-ga.css">
+<style>
+  /* Mode toggle — presentation view hides the talk-track blocks.
+     Default view (open the HTML) is notes mode; `?mode=present` strips notes. */
+  body.presentation .talk { display: none !important; }
+  body.presentation .mast .chip::before { content: "PRESENT · "; }
+  body.notes .mast .chip::before { content: "NOTES · "; }
+  /* Presentation-specific tweaks on top of scorecard-ga.css */
+  .slide{min-height:calc(100vh - 100px);padding:36px 0 40px;border-bottom:1px solid var(--line);page-break-after:always;display:flex;flex-direction:column;justify-content:space-between}
+  .slide:last-child{page-break-after:auto;border-bottom:none}
+  .slide-num{font-family:'Assistant',sans-serif;font-size:11px;color:var(--muted);letter-spacing:.12em;font-weight:800;text-transform:uppercase;margin-bottom:8px;display:inline-flex;align-items:center;gap:8px}
+  .slide-num::before{content:"";width:20px;height:2.5px;background:var(--blue);border-radius:3px}
+  h2.slide-title{font-size:32px;line-height:1.1;font-weight:800;letter-spacing:-.02em;color:var(--ink);margin-bottom:16px;max-width:900px;border:none;padding:0;display:block}
+  h2.slide-title em{font-style:normal;color:var(--blue)}
+  h2.slide-title .u{border-bottom:3px solid var(--green);padding-bottom:2px}
+  .slide-body{font-size:15.5px;line-height:1.6;color:var(--slate);max-width:900px}
+  .slide-body strong{color:var(--ink);font-weight:700}
+  .slide-body p+p{margin-top:10px}
+  .talk{background:var(--cloud);border-left:3px solid var(--carbon);padding:14px 20px;margin-top:22px;font-size:12.5px;line-height:1.55;color:var(--slate-2);font-style:italic;max-width:900px;border-radius:0 8px 8px 0}
+  .talk::before{content:"TALK TRACK";display:block;font-family:'Assistant',sans-serif;font-style:normal;font-size:10px;letter-spacing:.14em;font-weight:800;color:var(--carbon);margin-bottom:6px;text-transform:uppercase}
+  .talk strong{color:var(--ink);font-style:normal;font-weight:700}
+
+  .kill-num{font-family:'Assistant',sans-serif;font-size:96px;font-weight:800;line-height:1;letter-spacing:-.04em;color:var(--ink);margin:8px 0}
+  .kill-num small{font-size:32px;color:var(--muted);font-weight:500;margin-left:6px}
+  .kill-num em{font-style:normal;background:linear-gradient(100deg,var(--blue) 20%,var(--blue-glow) 50%,var(--green) 90%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+  .three-up{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+  .three-up .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+  .three-up .card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue)}
+  .three-up .card.g::before{background:var(--green)}
+  .three-up .card.a::before{background:var(--amber)}
+  .three-up .card .tag{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:var(--blue);margin-bottom:8px;display:inline-flex;align-items:center;gap:6px}
+  .three-up .card.g .tag{color:var(--green)}
+  .three-up .card.a .tag{color:var(--amber)}
+  .three-up .card .tag::before{content:"";width:14px;height:2px;background:currentColor}
+  .three-up .card h3{font-family:'Assistant',sans-serif;font-weight:800;font-size:17px;color:var(--ink);letter-spacing:-.015em;margin-bottom:6px;padding:0;border:none;display:block}
+  .three-up .card p{font-size:13px;color:var(--slate);line-height:1.5}
+  .three-up .card p strong{color:var(--ink);font-weight:700}
+
+  .lens-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+  .lens{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;box-shadow:var(--shadow-sm);border-left:4px solid var(--blue)}
+  .lens.rob{border-left-color:var(--green)}
+  .lens .lens-name{font-family:'Assistant',sans-serif;font-weight:800;font-size:16px;color:var(--ink);margin-bottom:4px}
+  .lens .lens-role{font-size:11.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;font-weight:700}
+  .lens .lens-body{font-size:13.5px;color:var(--slate);line-height:1.55}
+  .lens .lens-body strong{color:var(--ink);font-weight:700}
+  .lens .lens-body ul{list-style:none;padding:0;margin-top:8px}
+  .lens .lens-body li{padding:5px 0 5px 18px;position:relative;font-size:13px}
+  .lens .lens-body li::before{content:"■";color:var(--blue);position:absolute;left:0;top:5px;font-size:10px}
+  .lens.rob .lens-body li::before{color:var(--green)}
+
+  .url{background:var(--navy);color:#fff;padding:12px 18px;border-radius:10px;font-family:'DM Mono','SF Mono',monospace;font-size:13px;font-weight:600;display:inline-block;margin-top:14px;letter-spacing:.02em;box-shadow:var(--shadow-md)}
+  .url .lbl{color:var(--green-2);margin-right:10px;font-family:'Assistant',sans-serif;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:10.5px}
+
+  .next-steps{background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;border-radius:var(--radius-lg);padding:28px 32px;margin-top:16px;position:relative;overflow:hidden}
+  .next-steps::before{content:"";position:absolute;top:0;right:0;width:400px;height:300px;background:radial-gradient(circle at top right,rgba(51,79,180,.35),transparent 60%)}
+  .next-steps h3{font-family:'Assistant',sans-serif;font-weight:800;font-size:20px;color:#fff;letter-spacing:-.015em;margin-bottom:8px;padding:0;border:none;display:block;position:relative}
+  .next-steps ol{list-style:none;padding:0;counter-reset:s;position:relative;margin-top:14px}
+  .next-steps ol li{counter-increment:s;padding:10px 0 10px 40px;position:relative;color:rgba(255,255,255,.9);font-size:14px;line-height:1.5;border-bottom:1px solid rgba(255,255,255,.08)}
+  .next-steps ol li:last-child{border-bottom:none}
+  .next-steps ol li::before{content:counter(s);position:absolute;left:0;top:10px;width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+  .next-steps ol li strong{color:#fff;font-weight:700}
+
+  .foot{font-family:'Assistant',sans-serif;font-size:11px;color:var(--muted);letter-spacing:.06em;font-weight:600;padding-top:16px;border-top:1px solid var(--line-soft);margin-top:20px;display:flex;justify-content:space-between}
+  .foot strong{color:var(--ink);font-weight:700}
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const mode = new URLSearchParams(location.search).get('mode');
+    document.body.classList.add(mode === 'present' ? 'presentation' : 'notes');
+  });
+</script>
+</head>
+<body>
+
+<div class="wrap">
+
+<!-- Persistent masthead only on first slide (via CSS) -->
+<div class="mast">
+  <div class="gb-name">Growth Automated<small>Pragmatic AEO · Prepared for TELUS · September 24, 2026</small></div>
+  <div class="mast-right">MEETING 01<span class="chip">25 MIN</span></div>
+</div>
+
+<!-- =============== SLIDE 1 · COVER =============== -->
+<section class="slide">
+  <div>
+    <div class="slide-num">Slide 01 · Opening</div>
+    <h2 class="slide-title">TELUS in the <em>AI answer.</em><br>Nine weeks measured. <span class="u">The read you don't have.</span></h2>
+    <p class="slide-body">
+      Prepared for <strong>Rob Daintree</strong>, Director of Marketing Communications, and <strong>Jacob Hewlett-Case</strong>, SEO / AEO Manager. Twenty-five minutes on how TELUS shows up when a Canadian buyer asks an AI system to recommend a telco — and why the read you're about to see is different from any AEO conversation you've had before.
+    </p>
+    <div class="url"><span class="lbl">Live at</span>telus-aeo.rahul-308.workers.dev</div>
+    <div class="talk">
+      <strong>Open with warmth, not sales.</strong> "Thanks for the twenty-five. I'm not going to slide-vomit — I want you to leave with one thing you didn't have coming in. So I'm going to show you Telus data first, then tell you what I'm doing that's different, then we agree what a meeting-two looks like." Then click into slide 2.
+    </div>
+  </div>
+  <div class="foot"><span>Growth Automated · Pragmatic AEO</span><span><strong>Rahul Sharma</strong> · rahul@growthautomated.ai</span></div>
+</section>
+
+<!-- =============== SLIDE 2 · THE ONE NUMBER =============== -->
+<section class="slide">
+  <div>
+    <div class="slide-num">Slide 02 · The Telus read, in one number</div>
+    <h2 class="slide-title">TELUS is the <em>2× leader</em> of Canadian telco AI answers.</h2>
+    <div class="kill-num"><em>69</em><small>/100 share of answer</small></div>
+    <p class="slide-body">
+      Bell <strong>34</strong>. Rogers <strong>34</strong>. Freedom <strong>10</strong>. Same 20 tracked questions, same 5 AI systems (ChatGPT, Gemini, Perplexity, Google AI Overview, Google AI Mode), 30-day window ending Monday. <strong>2,653 measured responses.</strong> This is not a survey. It's what the AI actually recommends when a real buyer asks — the shortlist layer that sits before your web funnel.
+    </p>
+    <div class="talk">
+      <strong>Pause on the 69.</strong> "The moat is real. On brand-known questions — reliability, 5G speed, business trust, rural — TELUS is nearly always the answer. That's earned brand equity showing up structurally in a machine layer. What I want you to sit with for a second: no other Canadian carrier has a lead this clean on this surface. And they don't know they have it, because nobody's been measuring." <em>Then pivot: "here's what's different about how I measured it."</em>
+    </div>
+  </div>
+  <div class="foot"><span>Source · Growth Automated tracking store · Sept 21, 2026</span><span><strong>Meeting 01 of 2</strong></span></div>
+</section>
+
+<!-- =============== SLIDE 3 · WHAT'S DIFFERENT =============== -->
+<section class="slide">
+  <div>
+    <div class="slide-num">Slide 03 · Three things you haven't seen anywhere else</div>
+    <h2 class="slide-title">This isn't an AEO consultancy. It's a <em>syndicated telco panel.</em></h2>
+
+    <div class="three-up">
+      <div class="card g">
+        <div class="tag">Different</div>
+        <h3>Nielsen for AI answers</h3>
+        <p>One measurement infrastructure across the sector — <strong>Bell, Rogers, Telus, Freedom, Videotron, Cogeco</strong>. Each participating carrier subscribes for their own private read plus the shared benchmark. You see the competitive movement in real time.</p>
+      </div>
+      <div class="card">
+        <div class="tag">Unique</div>
+        <h3>Automated · 11 weeks in</h3>
+        <p>Weekly Monday pull, append-only tracking store, per-prompt drill-down with response snippets, sentiment, and cited sources. <strong>No dashboards you have to babysit</strong> — the delivery layer is executive briefs shaped for each P&amp;L.</p>
+      </div>
+      <div class="card a">
+        <div class="tag">Special</div>
+        <h3>Already built for TELUS</h3>
+        <p>Four executive reads live today at the URL above: <strong>Katherine (SMB) · David (Telco Div) · Kevin (CMO) · Kim (Digital &amp; Channels).</strong> Each one gets the version of the data their P&amp;L is judged on.</p>
+      </div>
+    </div>
+
+    <div class="talk">
+      <strong>This is the wedge.</strong> "Most AEO firms show up with a slide deck and a proposal. I'm showing up with your data, already running for eleven weeks, at a URL you can log into today. That's the difference. The panel model — Nielsen for AI answers — is the second thing. And the third is that I don't send you one generic dashboard — I send four executive reads because Katherine reads different numbers than Kim." <em>Then: "let me show you what one of them looks like."</em>
+    </div>
+  </div>
+  <div class="foot"><span>Live at telus-aeo.rahul-308.workers.dev</span><span><strong>Meeting 01 of 2</strong></span></div>
+</section>
+
+<!-- =============== SLIDE 4 · FIVE CAPABILITIES =============== -->
+<section class="slide">
+  <div>
+    <div class="slide-num">Slide 04 · From AI question to evidence and next action</div>
+    <h2 class="slide-title">Five platform capabilities that turn a<br><em>fast-moving discovery channel</em> into a <span class="u">market view you can act on.</span></h2>
+    <p class="slide-body">
+      Every scorecard, the trajectory, the full interactive report, and the competitive benchmark — all composed from these five primitives. Nothing is authored by hand.
+    </p>
+
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:20px">
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue)"></div>
+        <div style="font-family:'Assistant',sans-serif;font-weight:800;color:var(--blue);font-size:11px;letter-spacing:.1em;margin-bottom:8px">01 · Panel</div>
+        <div style="font-family:'Assistant',sans-serif;font-weight:800;font-size:15px;color:var(--ink);letter-spacing:-.01em;margin-bottom:6px;line-height:1.2">Track prompts</div>
+        <div style="font-size:12px;color:var(--slate);line-height:1.5">Monitor the questions buyers ask across the five leading AI systems — <strong>weekly, automated, per client</strong>.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue)"></div>
+        <div style="font-family:'Assistant',sans-serif;font-weight:800;color:var(--blue);font-size:11px;letter-spacing:.1em;margin-bottom:8px">02 · Compete</div>
+        <div style="font-family:'Assistant',sans-serif;font-weight:800;font-size:15px;color:var(--ink);letter-spacing:-.01em;margin-bottom:6px;line-height:1.2">Compare brands</div>
+        <div style="font-size:12px;color:var(--slate);line-height:1.5">See share-of-answer, mention rate, and average position <strong>beside every competitor in the ring</strong>.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue)"></div>
+        <div style="font-family:'Assistant',sans-serif;font-weight:800;color:var(--blue);font-size:11px;letter-spacing:.1em;margin-bottom:8px">03 · Cite</div>
+        <div style="font-family:'Assistant',sans-serif;font-weight:800;font-size:15px;color:var(--ink);letter-spacing:-.01em;margin-bottom:6px;line-height:1.2">Inspect citations</div>
+        <div style="font-size:12px;color:var(--slate);line-height:1.5">Connect each AI answer to the <strong>domains and threads shaping it</strong>. Reddit, forums, reviews, comparison sites.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green)"></div>
+        <div style="font-family:'Assistant',sans-serif;font-weight:800;color:var(--green);font-size:11px;letter-spacing:.1em;margin-bottom:8px">04 · Act</div>
+        <div style="font-family:'Assistant',sans-serif;font-weight:800;font-size:15px;color:var(--ink);letter-spacing:-.01em;margin-bottom:6px;line-height:1.2">Prioritize action</div>
+        <div style="font-size:12px;color:var(--slate);line-height:1.5">Turn the <strong>strongest gaps</strong> into focused work per P&amp;L owner. Executive-shaped, not dashboard-shaped.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--amber)"></div>
+        <div style="font-family:'Assistant',sans-serif;font-weight:800;color:var(--amber);font-size:11px;letter-spacing:.1em;margin-bottom:8px">05 · Integrate</div>
+        <div style="font-family:'Assistant',sans-serif;font-weight:800;font-size:15px;color:var(--ink);letter-spacing:-.01em;margin-bottom:6px;line-height:1.2">API + MCP</div>
+        <div style="font-size:12px;color:var(--slate);line-height:1.5">Bring the panel <strong>into whatever tools your team already uses</strong> — Claude, ChatGPT, custom BI, or REST.</div>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:22px"><strong>The moat callout for Jacob.</strong> The raw measurement window is 24 days. The Growth Automated durable store holds every weekly pull for the life of your subscription — that's how you see a nine-week TELUS trajectory today and a two-year one in 2028. The store is a client asset.</div>
+
+    <div class="talk">
+      <strong>Land this in one line.</strong> "Track. Compare. Cite. Act. Integrate. Five things you can point to in five seconds. The last one is what makes the difference from a dashboard product — the data comes to you in whichever surface your team already lives in."
+    </div>
+  </div>
+  <div class="foot"><span>Growth Automated Platform · Track · Compare · Cite · Act · Integrate</span><span><strong>Meeting 01 of 2</strong></span></div>
+</section>
+
+<!-- =============== SLIDE 5 · INTEGRATION SURFACES =============== -->
+<section class="slide">
+  <div>
+    <div class="slide-num">Slide 05 · Live in your workflows</div>
+    <h2 class="slide-title">Three integration surfaces — <em>ask, pull, or embed.</em></h2>
+    <p class="slide-body">
+      No new dashboards to babysit. The panel's data lives in the surface your team already uses — from a Claude chat window to a REST endpoint to a BI report your account team already sends every Monday.
+    </p>
+
+    <div class="three-up">
+      <div class="card g">
+        <div class="tag">Ask</div>
+        <h3>MCP · Claude &amp; ChatGPT</h3>
+        <p><strong>Your visibility data, live inside the chat.</strong> Ask "how is TELUS trending vs Bell on Perplexity this month?" in Claude Code. The panel composes the answer with cited threads. No dashboards, no curl.</p>
+        <div style="background:var(--navy);color:#fff;padding:10px 14px;margin-top:12px;border-radius:8px;font-family:'DM Mono','SF Mono',monospace;font-size:11px;line-height:1.5;letter-spacing:.02em">
+          <div style="color:var(--green-2);margin-bottom:6px">▸ You (in Claude)</div>
+          <div style="color:rgba(255,255,255,.85)">"Which competitor gained the most visibility on ChatGPT this month?"</div>
+          <div style="color:var(--green-2);margin-top:8px;margin-bottom:2px">▸ Platform (composed)</div>
+          <div style="color:rgba(255,255,255,.7);font-size:10.5px">✓ get_model_breakdown · 0.8s<br>✓ list_competitors · 0.4s<br>✓ list_cited_urls · 0.6s</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="tag">Pull</div>
+        <h3>REST API</h3>
+        <p><strong>Pull the same data into your own stack.</strong> Run-level snippets, sentiment scores, citation URLs, competitor mentions — retrievable by prompt, by model, by date range. Same primitives the executive reads compose from.</p>
+        <div style="background:var(--navy);color:#fff;padding:10px 14px;margin-top:12px;border-radius:8px;font-family:'DM Mono','SF Mono',monospace;font-size:11px;line-height:1.5;letter-spacing:.02em">
+          <div style="color:var(--green-2);margin-bottom:6px">▸ Endpoints</div>
+          <div style="color:rgba(255,255,255,.85);font-size:10.5px">GET /brands/:id/visibility<br>GET /brands/:id/prompts<br>GET /brands/:id/prompts/:pid/detail<br>GET /brands/:id/citations</div>
+          <div style="color:var(--green-2);margin-top:8px">▸ Auth · Bearer token</div>
+        </div>
+      </div>
+      <div class="card a">
+        <div class="tag">Embed</div>
+        <h3>BI dashboards + reporting</h3>
+        <p><strong>Blend visibility into what your account team already sends.</strong> Looker Studio, Tableau, PowerBI, custom Slack digests. The panel's data is queryable — sit it beside your paid, organic, and Adobe streams so brand-narrative movement lands in the same monthly.</p>
+        <div style="background:var(--navy);color:#fff;padding:10px 14px;margin-top:12px;border-radius:8px;font-family:'DM Mono','SF Mono',monospace;font-size:11px;line-height:1.5;letter-spacing:.02em">
+          <div style="color:var(--green-2);margin-bottom:6px">▸ Used today by</div>
+          <div style="color:rgba(255,255,255,.85);font-size:10.5px">GA client stack, agency partners, in-house BI teams</div>
+          <div style="color:var(--green-2);margin-top:8px;margin-bottom:2px">▸ Roadmap Q4 26</div>
+          <div style="color:rgba(255,255,255,.85);font-size:10.5px">Native Looker Studio + Slack connector</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="talk">
+      <strong>The killer feature for Jacob.</strong> "The MCP integration is the one nobody else has. Your AEO team asks questions of the data in plain English inside their existing chat tool. When Bell moves 3 points on 'best 5G,' Jacob types 'why did that happen' into Claude, and the platform composes the answer — with the threads that caused it — in seconds. No dashboard tab, no query language."
+      <br><br>
+      <strong>For Rob.</strong> "Same instrument, different surface. Your monthly executive brief comes as a page. Your quarterly comes as an anonymized benchmark. Your team's working file comes as REST-fed BI dashboards. Nobody translates."
+    </div>
+  </div>
+  <div class="foot"><span>Three integration surfaces · MCP · REST · BI</span><span><strong>Meeting 01 of 2</strong></span></div>
+</section>
+
+<!-- =============== SLIDE 6 · IP BOUNDARY · DATA MOAT + DELIVERY =============== -->
+<section class="slide">
+  <div>
+    <div class="slide-num">Slide 06 · What's proprietary · Tier 1 &amp; Tier 2</div>
+    <h2 class="slide-title">The <em>data moat</em> and the <em>delivery product.</em><br>Seven pillars <span class="u">nobody can reproduce quickly.</span></h2>
+    <p class="slide-body">
+      As the raw measurement layer commoditizes, value moves up-stack — to what Growth Automated curates, retains, composes, and interprets. Tiers 1 and 2 of the ten-pillar IP map.
+    </p>
+
+    <div style="margin-top:14px">
+      <div style="display:inline-flex;align-items:center;gap:8px;font-size:10.5px;color:var(--green);letter-spacing:.12em;font-weight:800;text-transform:uppercase;margin-bottom:8px"><span style="width:16px;height:2px;background:var(--green);border-radius:2px"></span>Tier 1 · The Data Moat</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+        <div style="background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--green);border-radius:10px;padding:12px 14px;box-shadow:var(--shadow-sm)">
+          <div style="font-size:9.5px;color:var(--muted);letter-spacing:.14em;font-weight:800;margin-bottom:2px">01</div>
+          <div style="font-family:'Assistant',sans-serif;font-weight:800;font-size:12.5px;color:var(--ink);letter-spacing:-.01em;line-height:1.2;margin-bottom:4px">Longitudinal data, store &amp; analysis</div>
+          <div style="font-size:10.5px;color:var(--green);font-weight:800;margin-bottom:3px">The tape only we have.</div>
+          <div style="font-size:11px;color:var(--slate);line-height:1.4">Append-only store since July 17 · raw window is 24 days · <strong>we have 11 weeks and it grows forever.</strong></div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--green);border-radius:10px;padding:12px 14px;box-shadow:var(--shadow-sm)">
+          <div style="font-size:9.5px;color:var(--muted);letter-spacing:.14em;font-weight:800;margin-bottom:2px">02</div>
+          <div style="font-family:'Assistant',sans-serif;font-weight:800;font-size:12.5px;color:var(--ink);letter-spacing:-.01em;line-height:1.2;margin-bottom:4px">Clean data supply chain</div>
+          <div style="font-size:10.5px;color:var(--green);font-weight:800;margin-bottom:3px">The canonical source of truth.</div>
+          <div style="font-size:11px;color:var(--slate);line-height:1.4">One registry mirrored across every Canadian carrier · anyone without this discipline produces reads that <strong>can't compare to ours.</strong></div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--green);border-radius:10px;padding:12px 14px;box-shadow:var(--shadow-sm)">
+          <div style="font-size:9.5px;color:var(--muted);letter-spacing:.14em;font-weight:800;margin-bottom:2px">07</div>
+          <div style="font-family:'Assistant',sans-serif;font-weight:800;font-size:12.5px;color:var(--ink);letter-spacing:-.01em;line-height:1.2;margin-bottom:4px">Data sovereignty</div>
+          <div style="font-size:10.5px;color:var(--green);font-weight:800;margin-bottom:3px">Canadian data · Canadian control.</div>
+          <div style="font-size:11px;color:var(--slate);line-height:1.4">Cloudflare Canada region · PIPEDA-compliant handling · client reads ring-fenced · <strong>no third-country dependency.</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <div style="display:inline-flex;align-items:center;gap:8px;font-size:10.5px;color:var(--blue);letter-spacing:.12em;font-weight:800;text-transform:uppercase;margin-bottom:8px"><span style="width:16px;height:2px;background:var(--blue);border-radius:2px"></span>Tier 2 · The Delivery Product</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <div style="background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:10px;padding:11px 13px;box-shadow:var(--shadow-sm)">
+          <div style="font-size:9.5px;color:var(--muted);letter-spacing:.14em;font-weight:800;margin-bottom:2px">03</div>
+          <div style="font-family:'Assistant',sans-serif;font-weight:800;font-size:12px;color:var(--ink);letter-spacing:-.01em;line-height:1.2;margin-bottom:4px">Automated multi-constituent reports</div>
+          <div style="font-size:10.5px;color:var(--slate);line-height:1.4">One data set · many audiences. Delivery across <strong>lines of business, segments, audiences, locations.</strong></div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:10px;padding:11px 13px;box-shadow:var(--shadow-sm)">
+          <div style="font-size:9.5px;color:var(--muted);letter-spacing:.14em;font-weight:800;margin-bottom:2px">04</div>
+          <div style="font-family:'Assistant',sans-serif;font-weight:800;font-size:12px;color:var(--ink);letter-spacing:-.01em;line-height:1.2;margin-bottom:4px">Claude analytics with filters</div>
+          <div style="font-size:10.5px;color:var(--slate);line-height:1.4">The insight layer is in the deliverable · <strong>natural-language questions via MCP</strong>, not a separate dashboard.</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:10px;padding:11px 13px;box-shadow:var(--shadow-sm)">
+          <div style="font-size:9.5px;color:var(--muted);letter-spacing:.14em;font-weight:800;margin-bottom:2px">06</div>
+          <div style="font-family:'Assistant',sans-serif;font-weight:800;font-size:12px;color:var(--ink);letter-spacing:-.01em;line-height:1.2;margin-bottom:4px">Bilingual FR / EN</div>
+          <div style="font-size:10.5px;color:var(--slate);line-height:1.4">Both official languages · both markets · <strong>Vidéotron competitive landscape and Quebec-based subscribers supported natively.</strong></div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:10px;padding:11px 13px;box-shadow:var(--shadow-sm)">
+          <div style="font-size:9.5px;color:var(--muted);letter-spacing:.14em;font-weight:800;margin-bottom:2px">08</div>
+          <div style="font-family:'Assistant',sans-serif;font-weight:800;font-size:12px;color:var(--ink);letter-spacing:-.01em;line-height:1.2;margin-bottom:4px">Multiple surfaces + engagement</div>
+          <div style="font-size:10.5px;color:var(--slate);line-height:1.4">Cloudflare-gated · MCP inside Claude / ChatGPT · REST · BI dashboards · Slack digests. <strong>Meet teams where they work.</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="talk">
+      <strong>The setup for the reframe.</strong> "So when you ask what's proprietary — the raw measurement isn't. Several vendors ship comparable primitives, and that's the design. But the seven pillars on this slide? Every one compounds. The store grows every week. The supply chain is unique to us. The delivery apparatus is what turns raw measurement into decisions across your org. That's tier one and two. Tier three is where the institutional layer lives — that's the next slide."
+    </div>
+  </div>
+  <div class="foot"><span>IP boundary · Tier 1 · The Data Moat · Tier 2 · The Delivery Product</span><span><strong>Meeting 01 of 2</strong></span></div>
+</section>
+
+<!-- =============== SLIDE 7 · IP BOUNDARY · INSTITUTIONAL LAYER + REFRAME =============== -->
+<section class="slide">
+  <div>
+    <div class="slide-num">Slide 07 · What's proprietary · Tier 3 &amp; the reframe</div>
+    <h2 class="slide-title">The <em>institutional layer</em> — and the <span class="u">strategic reframe.</span></h2>
+    <p class="slide-body">
+      Three pillars no other vendor can bring. Then the answer to "what's proprietary" reframed as "where value lives."
+    </p>
+
+    <div style="margin-top:14px">
+      <div style="display:inline-flex;align-items:center;gap:8px;font-size:10.5px;color:var(--amber);letter-spacing:.12em;font-weight:800;text-transform:uppercase;margin-bottom:8px"><span style="width:16px;height:2px;background:var(--amber);border-radius:2px"></span>Tier 3 · Institutional Value</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div style="background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--amber);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow-sm)">
+          <div style="font-size:9.5px;color:var(--muted);letter-spacing:.14em;font-weight:800;margin-bottom:3px">05</div>
+          <div style="font-family:'Assistant',sans-serif;font-weight:800;font-size:13.5px;color:var(--ink);letter-spacing:-.01em;line-height:1.2;margin-bottom:5px">Harmonized issues management for operators + regulators</div>
+          <div style="font-size:11px;color:var(--amber);font-weight:800;margin-bottom:4px">The Telco Observatory layer.</div>
+          <div style="font-size:11.5px;color:var(--slate);line-height:1.5">Sector-level issue registry — activation fees, service outages, rural coverage, flex plans — mapped to <strong>CRTC / ISED / Competition Bureau</strong> frames. Regulator-readable synthesis sits on top of subscriber-private reads.</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--amber);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow-sm)">
+          <div style="font-size:9.5px;color:var(--muted);letter-spacing:.14em;font-weight:800;margin-bottom:3px">09</div>
+          <div style="font-family:'Assistant',sans-serif;font-weight:800;font-size:13.5px;color:var(--ink);letter-spacing:-.01em;line-height:1.2;margin-bottom:5px">Track progress vs. goals · company-wide harmonization</div>
+          <div style="font-size:11px;color:var(--amber);font-weight:800;margin-bottom:4px">One shared truth across your org.</div>
+          <div style="font-size:11.5px;color:var(--slate);line-height:1.5">Set targets ("SMB Essentials to 60 by Q1"), track weekly. The panel becomes the <strong>neutral scoreboard every function references</strong> — SMB, brand, digital, procurement all reading the same bottoms-up data set.</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--amber);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow-sm)">
+          <div style="font-size:9.5px;color:var(--muted);letter-spacing:.14em;font-weight:800;margin-bottom:3px">10</div>
+          <div style="font-family:'Assistant',sans-serif;font-weight:800;font-size:13.5px;color:var(--ink);letter-spacing:-.01em;line-height:1.2;margin-bottom:5px">Rahul's twenty-five years</div>
+          <div style="font-size:11px;color:var(--amber);font-weight:800;margin-bottom:4px">The human capital layer.</div>
+          <div style="font-size:11.5px;color:var(--slate);line-height:1.5">25 years across <strong>telco · tech · media · commerce · digital.</strong> Rogers alumnus. Deep understanding of how each layer of a major carrier reads data. This is why the scorecards are P&amp;L-owner-shaped, not generic dashboards.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="move" style="margin-top:18px">
+      <div class="move-h"><div class="move-t">The reframe · from "what's proprietary" to "where value lives"</div><div class="move-tag">Ten pillars · three tiers</div></div>
+      <div class="move-b">The measurement layer is commoditizing — several vendors ship comparable primitives. As it commoditizes, value moves up-stack: to what Growth Automated <strong>curates</strong> (the panel), what we <strong>retain</strong> (the history), how we <strong>compose</strong> (P&amp;L-owner-shaped reads), how we <strong>interpret</strong> (the framework), who we <strong>are</strong> (twenty-five years in this exact space), and how we <strong>operate</strong> (regulator-ready, bilingual, sovereign, harmonized). <em>That's where the moat is. That's the layer that compounds.</em></div>
+    </div>
+
+    <div class="talk">
+      <strong>Close the moat conversation deliberately.</strong> "So when you ask what's proprietary, the honest answer isn't a single thing — it's that we're operating at a layer above the measurement primitive. The measurement layer is table stakes. The IP is in the curation, the retention, the composition, the interpretation, the operating discipline, and the human capital. That's what you're subscribing to. And every week the panel runs, that moat deepens." <br><br>Optional flourish: "The one-pager version of this is at your URL — <em>/ip-map.pdf</em>. Ready to send to your teams before meeting two."
+    </div>
+  </div>
+  <div class="foot"><span>IP boundary · Tier 3 · Institutional Value · The reframe</span><span><strong>Meeting 01 of 2</strong></span></div>
+</section>
+
+<!-- =============== SLIDE 8 · THE FOUR LENSES =============== -->
+<section class="slide">
+  <div>
+    <div class="slide-num">Slide 08 · The Telus read · four executive lenses</div>
+    <h2 class="slide-title">Same panel data, <em>four different reads</em> — one per P&amp;L owner.</h2>
+    <p class="slide-body">
+      Each is a landscape PDF, updated weekly. All live at the URL. Password-gated on Cloudflare, non-indexed, structured for a fifteen-minute executive read.
+    </p>
+
+    <div class="lens-row" style="grid-template-columns:1fr 1fr;gap:14px;margin-top:16px">
+      <div class="lens">
+        <div class="lens-name">Katherine Emberley · President, SMB</div>
+        <div class="lens-role">Category intelligence · sales-openable</div>
+        <div class="lens-body">SMB share-of-answer: <strong>51/100</strong>. Three gap queries close-able in Q4 (home-office wireline 9 → 45, flex data 11 → 40, SMB Essentials 40 → 65). Five president's moves inside SMB authority.</div>
+      </div>
+      <div class="lens">
+        <div class="lens-name">David Fuller · President, Telco Division</div>
+        <div class="lens-role">Unified competitive · first-year filter</div>
+        <div class="lens-body">Peer-to-peer briefing. Where the moat is genuine (rural 100, business trust 95, 5G 97) vs where it's thinner than the average briefing suggests (Bell +2 in six weeks, Perplexity gap).</div>
+      </div>
+      <div class="lens">
+        <div class="lens-name">Kevin (CMO) · Brand Narrative</div>
+        <div class="lens-role">Earned discourse · cross-divisional</div>
+        <div class="lens-body">What the AI <em>says</em> about TELUS on branded queries — not just whether it's cited. Reddit at 85 influence exceeds every carrier's own domain. The CMO owns the panel; each function subscribes to their slice.</div>
+      </div>
+      <div class="lens">
+        <div class="lens-name">Kim Nguyen · VP, Digital &amp; Channels</div>
+        <div class="lens-role">Per-AI channel · operating detail</div>
+        <div class="lens-body">Each AI as a channel — ChatGPT 66, Gemini 76, Perplexity 56, Google AIO 72, AI Mode 76. Twenty-point spread. Different playbooks per channel. Weekly working session on live data.</div>
+      </div>
+    </div>
+
+    <div class="talk">
+      <strong>Rob → strategic angle.</strong> "Rob, you're the person who translates this into how the brand shows up across channels. The read Kevin gets — and the quarterly benchmark I'll walk you through — becomes your instrument for how brand narrative is landing in the machine layer."
+      <br><br>
+      <strong>Jacob → technical angle.</strong> "Jacob, you're the person who's going to want to know methodology. Kim's report is the deepest — per-AI channel, per-prompt breakdown, weekly. If you want, meeting two is you and me on the working file — how the panel handles model drift, sampling depth, citation confusion. I'll show you every seam."
+    </div>
+  </div>
+  <div class="foot"><span>Live at telus-aeo.rahul-308.workers.dev/index.html</span><span><strong>Meeting 01 of 2</strong></span></div>
+</section>
+
+<!-- =============== SLIDE 9 · WHAT ROB AND JACOB EACH SUBSCRIBE TO =============== -->
+<section class="slide">
+  <div>
+    <div class="slide-num">Slide 09 · What each of you gets on subscription</div>
+    <h2 class="slide-title">The Marcomm read and the AEO working file — <em>same panel, different depth.</em></h2>
+
+    <div class="lens-row">
+      <div class="lens rob">
+        <div class="lens-name">Rob · Marcomm strategic read</div>
+        <div class="lens-role">Monthly + quarterly · exec-shaped</div>
+        <div class="lens-body">
+          <ul>
+            <li>Monthly one-page brand-narrative read (Kevin-shaped)</li>
+            <li>Quarterly panel benchmark: TELUS vs Bell / Rogers movement, anonymized sector context</li>
+            <li>Named-competitor delta reports when Bell or Rogers gains &gt;3 pts on a tracked query</li>
+            <li>Alignment brief before every planning cycle</li>
+            <li>Direct line to Rahul · no account manager layer</li>
+          </ul>
+        </div>
+      </div>
+      <div class="lens">
+        <div class="lens-name">Jacob · AEO working file</div>
+        <div class="lens-role">Weekly · technical detail</div>
+        <div class="lens-body">
+          <ul>
+            <li>Weekly per-prompt / per-model score deltas · same day as the pull</li>
+            <li>Full interactive drill-down: response snippets, sentiment, cited domains, competitor mentions</li>
+            <li>Prompt registry with edit rights (you can add / retire queries quarterly)</li>
+            <li>Methodology transparency: run counts, panel maturity, normalization windows</li>
+            <li>Standing office hour · working file, not slides</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="talk">
+      <strong>The Jacob-Rob split is the sell.</strong> "You each get a version tuned for how you read data. Rob's is exec-shaped, one page a month. Jacob's is the tape — weekly, per-prompt, methodology transparent. Same panel. Same infrastructure. Different delivery. You never have to translate."
+      <br><br>
+      Optionally offer: "If it helps meeting-two, I can generate a working-file preview specifically for Jacob before we talk again — a per-prompt movement report on your five weakest queries. That's a 30-minute delivery, not a $10k retainer."
+    </div>
+  </div>
+  <div class="foot"><span>Live at telus-aeo.rahul-308.workers.dev</span><span><strong>Meeting 01 of 2</strong></span></div>
+</section>
+
+<!-- =============== SLIDE 10 · NEXT STEP =============== -->
+<section class="slide">
+  <div>
+    <div class="slide-num">Slide 10 · Where we go next</div>
+    <h2 class="slide-title">Three doors to meeting 02. <em>You pick one.</em></h2>
+
+    <div class="next-steps">
+      <h3>Choose the door that helps you fastest</h3>
+      <ol>
+        <li><strong>The technical door · Jacob-led.</strong> One hour, screen-share, on the actual panel. I show you the prompt registry, the citation extraction, the normalization windows, the run counts, the sampling depth. You walk out knowing whether the methodology stands up. Best if AEO discipline needs to sign off before commercial.</li>
+        <li><strong>The strategic door · Rob-led.</strong> One hour with Rob plus one P&amp;L owner (Katherine or Kim recommended). We walk their live scorecard together, discuss the specific plays that would move their number. Best if the panel needs to show measurable value to the org before commercial.</li>
+        <li><strong>The commercial door · joint.</strong> Fifteen minutes with your procurement partner (Kevin's team). Founding-subscriber terms, <strong>$10K*/mo</strong>, 12-month, panel already running. <em style="font-style:normal;color:rgba(255,255,255,.6);font-size:12px">* Subject to scope · full commercial process at /ip-map.pdf and in the NDA modal on the site.</em> Best if the panel is already what you thought it would be, and the question is how to onboard fast.</li>
+      </ol>
+    </div>
+
+    <div class="talk">
+      <strong>Close deliberately, not urgently.</strong> "I'm not asking you to decide today. I'm asking you to pick which door helps you fastest. If it's Jacob's — I'll send a technical brief later this week. If it's Rob's — I'll coordinate with one of Katherine or Kim's teams. If it's commercial — we go straight to a live SOW. Whichever one you pick, meeting-two is inside two weeks."
+      <br><br>
+      <strong>Silence after this is the right move.</strong> Let them pick.
+    </div>
+  </div>
+  <div class="foot"><span>Rahul Sharma · Growth Automated · rahul@growthautomated.ai</span><span>Book time · seo-for-ai.growthautomated.ai/book_time</span></div>
+</section>
+
+</div>
+</body></html>
