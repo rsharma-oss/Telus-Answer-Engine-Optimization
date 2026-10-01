@@ -469,3 +469,38 @@ footer strong{color:var(--ink);font-weight:700}
 .wow-band .wow-note{font-family:'Assistant',sans-serif;font-size:10px;color:var(--muted);
   font-style:italic;text-align:right;letter-spacing:.005em}
 @media print{.wow-band{page-break-inside:avoid;break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+/* ==================== Share of citation sources · auto-populated weekly ==================== */
+.src-share-head{margin:14px 0 6px;display:flex;flex-direction:column;gap:3px}
+.src-share-title{font-family:'Assistant',sans-serif;font-weight:800;font-size:13.5px;
+  color:var(--ink);letter-spacing:-.01em;display:inline-flex;align-items:center;gap:8px}
+.src-share-title::before{content:"";width:4px;height:14px;background:var(--blue);border-radius:2px}
+.src-share-sub{font-family:'Assistant',sans-serif;font-size:10.5px;color:var(--muted);
+  line-height:1.4;max-width:960px}
+.src-share{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 18px;
+  padding:10px 14px;border-radius:10px;background:rgba(51,79,180,.04);
+  border:1px solid rgba(51,79,180,.14);margin:0 0 10px}
+.src-share em{grid-column:1 / -1;font-family:'Assistant',sans-serif;font-size:10.5px;
+  color:var(--muted);font-style:italic;text-align:center;padding:6px 0}
+.src-row{display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;
+  font-size:10.5px;line-height:1.3;padding:3px 0}
+.src-row .src-dom{font-family:'DM Mono',monospace;font-weight:600;font-size:10px;color:var(--ink);
+  white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis}
+.src-row .src-bar{height:5px;border-radius:3px;background:rgba(51,79,180,.10);position:relative;min-width:70px}
+.src-row .src-bar>span{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--blue)}
+.src-row.own .src-bar>span{background:var(--green)}
+.src-row.comp .src-bar>span{background:#DC2626}
+.src-row .src-pct{font-family:'DM Mono',monospace;font-weight:700;font-size:10.5px;color:var(--ink);min-width:38px;text-align:right}
+.src-row .src-wow{font-family:'DM Mono',monospace;font-weight:700;font-size:9.5px;min-width:40px;text-align:right}
+.src-row .src-wow.up{color:var(--green)}
+.src-row .src-wow.down{color:#DC2626}
+.src-row .src-wow.flat{color:var(--muted)}
+@media print{.src-share{page-break-inside:avoid;break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+/* ==================== Credential stripe (contextual sidebar fact) ==================== */
+.credential-stripe{margin:8px 0 4px;padding:9px 14px;border-radius:8px;
+  background:linear-gradient(90deg,rgba(255,69,0,.08) 0%,rgba(255,69,0,.02) 100%);
+  border-left:3px solid #FF4500;
+  font-family:'Assistant',sans-serif;font-size:11px;line-height:1.45;color:var(--ink)}
+.credential-stripe strong{font-weight:800;color:#FF4500;letter-spacing:-.005em}
+@media print{.credential-stripe{page-break-inside:avoid;break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}}

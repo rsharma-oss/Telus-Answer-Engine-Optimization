@@ -176,6 +176,102 @@ def insert_history_row(record_date, api_snapshot):
     print(f"  [archive] inserted Week {week_num} row into history.html")
 
 
+SOURCES_TARGETS = ["kevin-cmo.html", "rob-consumer-marcom.html", "jacob-organic.html"]
+
+
+def splice_sources(cfg, brand_id, record_date, ctx):
+    """Pull top-6 citation sources (30d), compute WoW deltas against the prior
+    stored snapshot, and splice the HTML between SOURCES markers in each exec
+    PDF that carries them. Snapshots are append-only in
+    data/longitudinal/sources-telus.jsonl so WoW deltas are reproducible.
+    First run writes a baseline with no deltas."""
+    try:
+        # Pull wider than 6 — the API orders by influenceScore; we re-rank by
+        # citationCount so the strip reflects actual share of citation volume.
+        api = call_tool(cfg, "list_top_sources",
+                        {"brandId": brand_id, "days": 30, "limit": 25}, ctx)
+    except SystemExit:
+        print("  [sources] list_top_sources failed — skipping splice", file=sys.stderr)
+        return
+    rows = api.get("sources") or api.get("topSources") or []
+    if not rows:
+        print("  [sources] API returned no rows — skipping splice")
+        return
+
+    # Share denominator is the full-window total citations, not just the
+    # top-25 we fetched — the API returns it in totals.totalCitations.
+    totals = api.get("totals") or {}
+    denom = totals.get("totalCitations") or sum(r.get("citationCount", 0) for r in rows) or 1
+    top6 = sorted(rows, key=lambda r: r.get("citationCount", 0), reverse=True)[:6]
+    current = []
+    for r in top6:
+        current.append({
+            "domain": r.get("domain", "unknown"),
+            "citations": r.get("citationCount", 0),
+            "share": round(100 * r.get("citationCount", 0) / denom, 2),
+            "ownership": r.get("ownership", "thirdParty"),
+        })
+
+    store = REPO / "data" / "longitudinal" / "sources-telus.jsonl"
+    store.parent.mkdir(parents=True, exist_ok=True)
+    prior = {}
+    if store.exists():
+        for line in store.read_text().splitlines():
+            if not line.strip():
+                continue
+            prev = json.loads(line)
+            if prev["date"] == record_date:
+                print(f"  [sources] snapshot for {record_date} already stored — reusing")
+                continue
+            prior = {s["domain"]: s["share"] for s in prev["sources"]}
+
+    # Idempotency: append only if today's record isn't already there.
+    already = False
+    if store.exists():
+        for line in store.read_text().splitlines():
+            if line.strip() and json.loads(line)["date"] == record_date:
+                already = True
+                break
+    if not already:
+        with store.open("a") as f:
+            f.write(json.dumps({"date": record_date, "sources": current},
+                               separators=(",", ":")) + "\n")
+        print(f"  [sources] snapshot stored for {record_date} ({len(current)} rows)")
+
+    html_rows = []
+    for s in current:
+        klass = {"you": "own", "competitor": "comp"}.get(s["ownership"], "")
+        delta_html = ""
+        if s["domain"] in prior:
+            d = round(s["share"] - prior[s["domain"]], 1)
+            if d > 0.1:
+                delta_html = f'<span class="src-wow up">+{d:.1f}pp</span>'
+            elif d < -0.1:
+                delta_html = f'<span class="src-wow down">{d:.1f}pp</span>'
+            else:
+                delta_html = '<span class="src-wow flat">flat</span>'
+        else:
+            delta_html = '<span class="src-wow flat">new</span>'
+        bar_pct = min(100, round(s["share"] * 10))  # 10% share = full bar
+        html_rows.append(
+            f'<div class="src-row {klass}">'
+            f'<span class="src-dom">{s["domain"]}</span>'
+            f'<span class="src-bar"><span style="width:{bar_pct}%"></span></span>'
+            f'<span class="src-pct">{s["share"]:.1f}%</span>'
+            f'{delta_html}'
+            f'</div>'
+        )
+    block = "".join(html_rows)
+
+    for name in SOURCES_TARGETS:
+        path = REPO / name
+        if not path.exists():
+            print(f"  [sources] {name} not on disk — skipping")
+            continue
+        splice(path, "<!-- SOURCES:START -->", "<!-- SOURCES:END -->", block)
+        print(f"  [sources] spliced top-{len(current)} into {name}")
+
+
 def _context():
     """Pick a context that actually has CAs loaded. The python.org build ships an
     empty trust store; the system /etc/ssl/cert.pem bundle is the reliable one."""
@@ -470,10 +566,27 @@ def main():
     # row to /history.html. Skipped on Rogers/Cogeco runs — they don't ship
     # exec-shaped PDFs from this repo.
     if args.brand == "telus":
+        # 1) Splice fresh share-of-citation into Kevin/Rob/Jacob HTML first,
+        #    so the subsequent PDF render (manual or scripted) picks up the
+        #    new strip BEFORE the archive stamp freezes a dated PDF.
+        print("[sources] refreshing citation-source strips...")
+        splice_sources(cfg, brand_id, record["date"], ctx)
+        if not verify_scrub():
+            sys.exit("aborting: vendor name present after sources splice")
+        for name in SOURCES_TARGETS:
+            git_autopush(name, record["date"] + " citation sources")
+        git_autopush("data/longitudinal/sources-telus.jsonl",
+                     record["date"] + " sources snapshot")
+
+        # NOTE: this script does not re-render exec PDFs. The Monday operator
+        # (or a future render step wired here) must re-render Kevin/Rob/Jacob
+        # between the splice above and the stamp below for the dated archive
+        # copies to carry the new citation-source numbers.
+
+        # 2) Stamp current exec PDFs into /archive and prepend a history row.
         print("[archive] stamping exec PDFs + history row...")
         stamped = stamp_archive(record["date"])
         insert_history_row(record["date"], record["api"])
-        # Push any new/changed archive files + history in a single commit.
         for rel in stamped:
             git_autopush(f"archive/{rel}", record["date"] + " archive")
         git_autopush("history.html", record["date"] + " weekly archive row")
