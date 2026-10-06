@@ -83,6 +83,18 @@ EXEC_PDFS = [
     ("jacob-organic.pdf",       "Jacob · Organic Ops",    "Head of Organic"),
 ]
 
+# Per-exec slug-substring filters used to pick WoW movers that resonate with
+# that audience. None = brand-wide (pick the biggest absolute movers overall).
+# If the filter yields fewer than 3 movers, we top it up with brand-wide movers.
+AUDIENCE_FILTERS = {
+    "kevin-cmo":           None,
+    "katherine-smb":       ["small-business", "business-owner", "cost-effective", "unlimited", "flexible"],
+    "david-telco":         None,
+    "kim-channels":        ["bundle", "flexible", "bell", "5g", "sign-up"],
+    "rob-consumer-marcom": ["reliability", "outages", "fee", "flexible", "families", "satisfaction"],
+    "jacob-organic":       ["bundle", "5g", "small-business", "flexible", "satisfaction"],
+}
+
 
 def stamp_archive(record_date):
     """Copy current exec PDFs to /archive/{name}-{date}.pdf, once per date per file.
@@ -270,6 +282,214 @@ def splice_sources(cfg, brand_id, record_date, ctx):
             continue
         splice(path, "<!-- SOURCES:START -->", "<!-- SOURCES:END -->", block)
         print(f"  [sources] spliced top-{len(current)} into {name}")
+
+
+# ---------------- Weekly exec-band refresh (TELUS only) ----------------
+# After the sources splice, each exec HTML needs:
+#   - version chip bumped (v.YYYY-MM-DD)
+#   - "N weekly pulls on record" bumped
+#   - "ending {prev month day}" → "ending {this month day}"
+#   - WoW band replaced with real Sep→Oct 5-style movers from the matrix
+# Then re-render all 6 PDFs via Chrome headless. Called before stamp_archive
+# so the frozen /archive/{name}-{date}.pdf carries the current week's content.
+_CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+_MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+
+
+def _pretty_date(iso):
+    """2026-10-05 → ('October 5', 'OCT 5')"""
+    y, m, d = (int(x) for x in iso.split("-"))
+    full_months = ["January","February","March","April","May","June",
+                   "July","August","September","October","November","December"]
+    return (f"{full_months[m-1]} {d}", f"{_MONTHS[m-1].upper()} {d}")
+
+
+def _pick_movers(curr_matrix, prev_matrix, slug_substrings, k=3):
+    """Return the top-k absolute movers (slug, prev, curr, delta) where delta != 0.
+    If slug_substrings is set, prefer slugs matching any of them; fill with
+    brand-wide movers if the filter is too narrow."""
+    all_m = []
+    for slug, data in curr_matrix.items():
+        c = data.get("overall")
+        p = (prev_matrix.get(slug) or {}).get("overall")
+        if c is None or p is None or c == p:
+            continue
+        all_m.append((slug, p, c, c - p))
+    all_m.sort(key=lambda t: abs(t[3]), reverse=True)
+    if slug_substrings:
+        focused = [t for t in all_m if any(s in t[0] for s in slug_substrings)]
+        picked = focused[:k]
+        if len(picked) < k:
+            seen = {t[0] for t in picked}
+            picked += [t for t in all_m if t[0] not in seen][: k - len(picked)]
+        return picked
+    return all_m[:k]
+
+
+def _slug_to_label(slug):
+    """Reverse the slug() transform into a plain label — truncated for the band.
+    Prefers short, direct labels; falls back to the raw slug if nothing better."""
+    # Known rewrites for the most common prompt shapes — keeps the band readable.
+    rewrites = {
+        "my-small-business-needs-a-cost-effective":  "SMB cost-effective wireless",
+        "are-there-flexible-mobile-data-plans-i-c":  "Flexible mobile data",
+        "sign-up-for-2026-bundle-deal-phone-plans":  "2026 bundle deal",
+        "considering-bell-versus-another-provider":  "5G vs Bell",
+        "how-do-people-feel-about-activation-and-":  "Activation-fee sentiment",
+        "i-m-tired-of-service-outages-with-my-cur":  "Service-outages reliability",
+        "has-anyone-been-disappointed-with-telus-":  "TELUS satisfaction",
+        "who-feels-that-telus-provides-the-best-v":  "Business-owner satisfaction",
+        "which-provider-has-the-best-family-unlim":  "Family unlimited data",
+        "for-those-who-ve-recently-tried-telus-5g":  "TELUS 5G experience",
+        "what-do-most-families-do-when-they-find-":  "Family-plan affordability",
+        "buy-best-wireline-solution-for-my-home-o":  "Wireline home office",
+        "what-s-the-difference-in-service-quality":  "Urban/rural service quality",
+        "i-m-moving-to-canada-in-2026-and-need-a-":  "Moving to Canada wireless",
+        "has-anyone-experienced-unexpected-fees-w":  "Unexpected-fees sentiment",
+        "what-do-business-owners-think-about-usin": "Business-owner TELUS use",
+    }
+    for prefix, label in rewrites.items():
+        if slug.startswith(prefix):
+            return label
+    # Fallback: first ~5 words, title-cased.
+    words = slug.replace("-", " ").split()[:5]
+    return " ".join(w.capitalize() for w in words)
+
+
+def _wow_rows_html(movers):
+    out = []
+    for slug, prev, curr, delta in movers:
+        label = _slug_to_label(slug)
+        if delta > 0:
+            arrow, klass, note = "▲", "up",   f"+{delta}pp"
+        elif delta < 0:
+            arrow, klass, note = "▼", "down", f"{delta}pp"
+        else:
+            continue
+        out.append(
+            f'<div class="wow-row {klass}"><span class="wow-arrow">{arrow}</span>'
+            f'<span class="wow-label"><b>{label}</b> {prev} → {curr}</span>'
+            f'<span class="wow-note">{note}</span></div>'
+        )
+    return "".join(out)
+
+
+def _wow_headline(score, prev_score, top_mover):
+    delta = score - prev_score
+    if delta > 0:
+        trend = f"up {delta} from {prev_score}"
+    elif delta < 0:
+        trend = f"down {abs(delta)} from {prev_score}"
+    else:
+        trend = f"held at {prev_score}"
+    if top_mover:
+        tag = f"Biggest mover: {_slug_to_label(top_mover[0])} {top_mover[1]} → {top_mover[2]}."
+    else:
+        tag = "No prompt moved materially this week."
+    return f"Panel-wide {score}/100 ({trend}). {tag}"
+
+
+def _patch_exec_html(path, record_date, prev_date, pulls, score, prev_score,
+                     matrix_curr, matrix_prev, audience_filter):
+    """Idempotent patch of one exec HTML — safe to re-run."""
+    src = path.read_text()
+    # 1) Version chip.
+    src = re.sub(r'chip">v\.\d{4}-\d{2}-\d{2}', f'chip">v.{record_date}', src)
+    # 2) Pull count — handle any prior "N weekly pulls on record".
+    src = re.sub(r'\d+ weekly pulls on record',
+                 f"{pulls} weekly pulls on record", src)
+    # 3) Date references — "ending {prev-month day}" → "ending {this-month day}".
+    this_long, this_short = _pretty_date(record_date)
+    prev_long, prev_short = _pretty_date(prev_date)
+    src = src.replace(f"ending {prev_long}", f"ending {this_long}")
+    # 4) WoW band — pick movers, build headline + rows, splice in place.
+    movers = _pick_movers(matrix_curr, matrix_prev, audience_filter, k=3)
+    if not movers:
+        print(f"  [exec] {path.name}: no movers found, leaving WoW band as-is")
+        return False
+    top = movers[0]
+    headline = _wow_headline(score, prev_score, top)
+    rows_html = _wow_rows_html(movers)
+    tag_span = f"WEEK {pulls} &middot; WHAT SHIFTED &middot; {prev_short} – {this_short}"
+    pattern = re.compile(
+        r'(<div class="wow-tag">)WEEK \d+[^<]*(</div>\s*)'
+        r'<div class="wow-h">[^<]*</div>\s*'
+        r'(</div>\s*)'
+        r'<div class="wow-r">.*?</div></div>',
+        re.DOTALL,
+    )
+    repl = (f'\\g<1>{tag_span}\\g<2>'
+            f'<div class="wow-h">{headline}</div>'
+            f'\\g<3>'
+            f'<div class="wow-r">{rows_html}</div>')
+    new_src, n = pattern.subn(repl, src, count=1)
+    if n == 0:
+        print(f"  [exec] {path.name}: WARNING — WoW pattern not matched")
+    else:
+        src = new_src
+    path.write_text(src)
+    return n > 0
+
+
+def _render_exec_pdf(basename):
+    """Render one exec HTML to its sibling PDF via Chrome headless. file:// URL
+    resolves relative /assets/scorecard-ga.css correctly."""
+    html = REPO / f"{basename}.html"
+    pdf = REPO / f"{basename}.pdf"
+    r = subprocess.run(
+        [_CHROME, "--headless", "--disable-gpu", "--no-pdf-header-footer",
+         f"--print-to-pdf={pdf}", f"file://{html}"],
+        capture_output=True, text=True, timeout=60,
+    )
+    # Chrome prints "N bytes written to file ..." on success (stdout or stderr).
+    msg = (r.stdout + r.stderr).splitlines()
+    hit = next((l for l in msg if "bytes written" in l), None)
+    return hit
+
+
+def refresh_exec_bands(record_date, score, store_path):
+    """Patch all 6 TELUS exec HTMLs with Oct-5-style version/pulls/dates/WoW
+    and re-render each PDF. Must run BEFORE stamp_archive so the frozen
+    /archive/{name}-{date}.pdf copies carry the current week's numbers.
+    Returns the list of (basename.pdf) that this run actually re-rendered."""
+    # Pull the prior week's record from the store to compute WoW deltas.
+    recs = [json.loads(l) for l in store_path.read_text().splitlines() if l.strip()]
+    recs = [r for r in recs if "api" in r]
+    pulls = len(recs)
+    prior = [r for r in recs if r["date"] < record_date]
+    if not prior:
+        print("  [exec] no prior record — skipping exec patch (first run)")
+        return []
+    prev = prior[-1]
+    prev_date = prev["date"]
+    prev_score = prev["api"]["visibility_score"]
+    matrix_prev = prev["api"].get("prompt_matrix_7d", {})
+    this = next(r for r in recs if r["date"] == record_date)
+    matrix_curr = this["api"].get("prompt_matrix_7d", {})
+
+    rendered = []
+    for pdf_name, _, _ in EXEC_PDFS:
+        base = pdf_name[:-4]
+        html = REPO / f"{base}.html"
+        if not html.exists():
+            print(f"  [exec] {base}.html missing — skipping")
+            continue
+        try:
+            _patch_exec_html(html, record_date, prev_date, pulls,
+                             score, prev_score, matrix_curr, matrix_prev,
+                             AUDIENCE_FILTERS.get(base))
+        except Exception as e:
+            print(f"  [exec] {base}: patch failed ({e}) — skipping render",
+                  file=sys.stderr)
+            continue
+        msg = _render_exec_pdf(base)
+        if msg:
+            print(f"  [exec] {base}: {msg}")
+            rendered.append(pdf_name)
+        else:
+            print(f"  [exec] {base}: render FAILED — PDF left at prior state",
+                  file=sys.stderr)
+    return rendered
 
 
 def _context():
@@ -566,9 +786,7 @@ def main():
     # row to /history.html. Skipped on Rogers/Cogeco runs — they don't ship
     # exec-shaped PDFs from this repo.
     if args.brand == "telus":
-        # 1) Splice fresh share-of-citation into Kevin/Rob/Jacob HTML first,
-        #    so the subsequent PDF render (manual or scripted) picks up the
-        #    new strip BEFORE the archive stamp freezes a dated PDF.
+        # 1) Splice fresh share-of-citation into Kevin/Rob/Jacob HTML.
         print("[sources] refreshing citation-source strips...")
         splice_sources(cfg, brand_id, record["date"], ctx)
         if not verify_scrub():
@@ -578,12 +796,22 @@ def main():
         git_autopush("data/longitudinal/sources-telus.jsonl",
                      record["date"] + " sources snapshot")
 
-        # NOTE: this script does not re-render exec PDFs. The Monday operator
-        # (or a future render step wired here) must re-render Kevin/Rob/Jacob
-        # between the splice above and the stamp below for the dated archive
-        # copies to carry the new citation-source numbers.
+        # 2) Patch each exec HTML (version chip, pull count, dates, WoW band
+        #    from prompt-matrix deltas) then re-render all 6 PDFs. Must run
+        #    BEFORE stamp_archive so the dated /archive copies carry this
+        #    week's numbers, not last week's rendered PDFs.
+        print("[exec] patching exec HTMLs + re-rendering PDFs...")
+        rerendered = refresh_exec_bands(record["date"],
+                                        record["api"]["visibility_score"], out)
+        if not verify_scrub():
+            sys.exit("aborting: vendor name present after exec patch")
+        # Push each patched HTML + its freshly-rendered PDF.
+        for pdf_name in rerendered:
+            html_name = pdf_name[:-4] + ".html"
+            git_autopush(html_name, record["date"] + " exec band " + html_name)
+            git_autopush(pdf_name,  record["date"] + " exec render " + pdf_name)
 
-        # 2) Stamp current exec PDFs into /archive and prepend a history row.
+        # 3) Stamp current exec PDFs into /archive and prepend a history row.
         print("[archive] stamping exec PDFs + history row...")
         stamped = stamp_archive(record["date"])
         insert_history_row(record["date"], record["api"])
