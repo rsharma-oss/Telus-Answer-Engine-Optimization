@@ -375,6 +375,8 @@ def _wow_rows_html(movers):
 
 
 def _wow_headline(score, prev_score, top_mover):
+    """Deterministic data-only headline — always the fallback if the editorial
+    (Claude) path can't produce one. Pure math on the inputs; no narrative."""
     delta = score - prev_score
     if delta > 0:
         trend = f"up {delta} from {prev_score}"
@@ -387,6 +389,179 @@ def _wow_headline(score, prev_score, top_mover):
     else:
         tag = "No prompt moved materially this week."
     return f"Panel-wide {score}/100 ({trend}). {tag}"
+
+
+# ---------------- Editorial headlines via Claude Messages API ----------------
+# Each Monday we ask Claude for ONE sentence per exec that reads in operating
+# voice (not marketing), uses only the numbers in the payload, and names the
+# business signal — not a superlative. Falls back to the deterministic
+# _wow_headline() on any failure (missing key, network, empty response, etc.)
+# so the Monday run never dies on this step.
+
+_CLAUDE_VOICE = (
+    "You write one-sentence weekly-brief headlines for a Growth Automated client "
+    "exec PDF (TELUS). Operating voice, measurement over marketing. Rules you "
+    "MUST obey, every time:\n"
+    "- Exactly one sentence, maximum 180 characters, no line breaks.\n"
+    "- Lead with the number: panel-wide score and the week-over-week delta.\n"
+    "- Then name the single biggest business signal using ONLY the numbers in "
+    "the payload — do not invent any number, percentage, or comparison that "
+    "isn't in the data.\n"
+    "- No superlatives (banned words: unprecedented, historic, revolutionary, "
+    "massive, huge, dramatic, record-breaking, game-changing).\n"
+    "- Reference TELUS by name only when the move is TELUS-specific; otherwise "
+    "say 'panel-wide'.\n"
+    "- Return the sentence as plain text, no quotes, no preamble, no markdown."
+)
+
+_EXEC_LENS = {
+    "kevin-cmo":           "Chief Marketing Officer — brand narrative, category-answer story",
+    "katherine-smb":       "President, TELUS SMB — small-business read, SMB wireless + SMB value",
+    "david-telco":         "President, Telco Division — top-line + direction, gains and reversals",
+    "kim-channels":        "VP, Digital & Channels — channel-signal lens, bundles, flex-data, direct-comparison intents",
+    "rob-consumer-marcom": "Director, Consumer Marcom — consumer-brand lanes, reliability, families, service experience",
+    "jacob-organic":       "Head of Organic — organic-surface read, SEO + content lanes, mobile category",
+}
+
+
+def _claude_headline(exec_base, score, prev_score, movers, prev_date, record_date):
+    """Call Anthropic Messages API for one editorial headline PROPOSAL. These
+    proposals are written to a review file for operator approval — they are
+    NEVER spliced into exec HTMLs directly by the Monday run (governance:
+    editorial sign-off is Rahul's value-add, not Claude's). Returns the
+    sentence string on success, or None on failure.
+    API key from cfg['anthropic_api_key'] or env ANTHROPIC_API_KEY."""
+    import os
+    key = (CFG_CACHE.get("anthropic_api_key") if isinstance(CFG_CACHE, dict) else None) \
+          or os.environ.get("ANTHROPIC_API_KEY")
+    if not key:
+        return None
+    delta = score - prev_score
+    mover_lines = "\n".join(
+        f"- {_slug_to_label(s)}: {p} → {c} ({'+' if d>0 else ''}{d}pp)"
+        for s, p, c, d in movers
+    ) or "- (no prompt moved materially)"
+    user = (
+        f"EXEC: {_EXEC_LENS.get(exec_base, exec_base)}\n"
+        f"WINDOW: 7-day pulls, {prev_date} → {record_date}\n"
+        f"PANEL-WIDE: {score}/100 (prior week: {prev_score}, delta {'+' if delta>=0 else ''}{delta}pp)\n"
+        f"TOP MOVERS this week:\n{mover_lines}\n\n"
+        f"Write the one-sentence headline per the rules."
+    )
+    body = json.dumps({
+        "model": "claude-sonnet-5",
+        "max_tokens": 160,
+        "system": _CLAUDE_VOICE,
+        "messages": [{"role": "user", "content": user}],
+    }).encode()
+    req = urllib.request.Request("https://api.anthropic.com/v1/messages",
+                                 data=body, method="POST")
+    req.add_header("content-type", "application/json")
+    req.add_header("anthropic-version", "2023-06-01")
+    req.add_header("x-api-key", key)
+    try:
+        ctx = ssl.create_default_context(cafile="/etc/ssl/cert.pem")
+        with urllib.request.urlopen(req, timeout=30, context=ctx) as r:
+            res = json.loads(r.read().decode())
+        text = (res.get("content") or [{}])[0].get("text", "").strip()
+        if not text:
+            return None
+        # One-sentence guardrail — if Claude returned several, keep the first.
+        text = text.splitlines()[0].strip().strip('"').strip()
+        if len(text) > 240:
+            return None  # suspiciously long — fall back
+        return text
+    except Exception as e:
+        print(f"  [exec] claude headline failed for {exec_base} ({e}) — "
+              f"falling back to data-only headline", file=sys.stderr)
+        return None
+
+
+# Lazy cache for the config dict — populated at main() start — so the Claude
+# helper can reach the API key without threading cfg through every call site.
+CFG_CACHE = None
+
+
+def write_editorial_proposals(record_date, store_path):
+    """Write a review file with Claude-proposed editorial headlines per exec,
+    alongside the data-only headlines the Monday run actually published. The
+    file is for Rahul's governance step: he reads it, edits as he likes, then
+    runs scripts/apply_editorial.py to swap the editorial headlines into the
+    live HTMLs + re-render PDFs + re-stamp archive + re-deploy.
+
+    No side effects on the published artifacts — this is a WRITE-ONLY proposal."""
+    recs = [json.loads(l) for l in store_path.read_text().splitlines() if l.strip()]
+    recs = [r for r in recs if "api" in r]
+    prior = [r for r in recs if r["date"] < record_date]
+    if not prior:
+        print("  [editorial] no prior record — skipping proposal (first run)")
+        return None
+    prev = prior[-1]
+    prev_date = prev["date"]
+    prev_score = prev["api"]["visibility_score"]
+    matrix_prev = prev["api"].get("prompt_matrix_7d", {})
+    this = next(r for r in recs if r["date"] == record_date)
+    score = this["api"]["visibility_score"]
+    matrix_curr = this["api"].get("prompt_matrix_7d", {})
+
+    proposals_dir = REPO / "data" / "editorial-proposals"
+    proposals_dir.mkdir(parents=True, exist_ok=True)
+    out = proposals_dir / f"{record_date}.md"
+
+    lines = [
+        f"# Weekly editorial proposal · {record_date}",
+        "",
+        f"Panel-wide this week: **{score}/100** "
+        f"({'+' if score-prev_score>=0 else ''}{score-prev_score}pp vs {prev_date}).",
+        "",
+        "**Governance:** Monday's auto-run published data-only headlines "
+        "(deterministic, no narrative). The proposals below are Claude's "
+        "editorial drafts for your review. To ship an edit, run:",
+        "",
+        f"```bash",
+        f"python3 scripts/apply_editorial.py --date {record_date}",
+        f"```",
+        "",
+        "Edit any `editorial:` line inline (the line that follows is what "
+        "ships). Lines starting with `#` are ignored. Leaving a block blank "
+        "or deleting the editorial line will leave the data-only headline "
+        "in place for that exec.",
+        "",
+        "---",
+        "",
+    ]
+
+    for pdf_name, label, _ in EXEC_PDFS:
+        base = pdf_name[:-4]
+        movers = _pick_movers(matrix_curr, matrix_prev,
+                              AUDIENCE_FILTERS.get(base), k=3)
+        data_only = _wow_headline(score, prev_score, movers[0] if movers else None)
+        proposal = _claude_headline(base, score, prev_score, movers,
+                                     prev_date, record_date)
+        lines += [
+            f"## {base} — {label}",
+            "",
+            f"**Audience filter:** `{AUDIENCE_FILTERS.get(base) or 'brand-wide'}`",
+            "",
+            "**Top movers this week:**",
+        ]
+        for s, p, c, d in movers:
+            arrow = "▲" if d > 0 else "▼"
+            lines.append(f"- {arrow} {_slug_to_label(s)}: {p} → {c} "
+                         f"({'+' if d>0 else ''}{d}pp)")
+        lines += [
+            "",
+            f"**Data-only (what shipped Monday):**",
+            f"> {data_only}",
+            "",
+            f"**editorial:** {proposal or '(Claude headline unavailable — using data-only above)'}",
+            "",
+            "---",
+            "",
+        ]
+    out.write_text("\n".join(lines))
+    print(f"  [editorial] wrote proposal → {out}")
+    return out
 
 
 def _patch_exec_html(path, record_date, prev_date, pulls, score, prev_score,
@@ -726,6 +901,7 @@ def main():
     if not CONFIG_PATH.exists():
         sys.exit(f"config not found: {CONFIG_PATH} — create it with api_base, api_key, brands")
     cfg = json.loads(CONFIG_PATH.read_text())
+    globals()["CFG_CACHE"] = cfg  # expose anthropic_api_key to helpers
     brand_id = cfg["brands"].get(args.brand)
     if not brand_id:
         sys.exit(f"brand '{args.brand}' not in config brands map")
@@ -818,6 +994,16 @@ def main():
         for rel in stamped:
             git_autopush(f"archive/{rel}", record["date"] + " archive")
         git_autopush("history.html", record["date"] + " weekly archive row")
+
+        # 4) Governance step: write editorial proposals for Rahul's review.
+        #    This does NOT touch the published artifacts — it only produces a
+        #    review file. If Rahul wants editorial headlines to ship, he edits
+        #    the proposal and runs scripts/apply_editorial.py --date <date>.
+        print("[editorial] writing proposal file for governance review...")
+        proposal = write_editorial_proposals(record["date"], out)
+        if proposal:
+            git_autopush(str(proposal.relative_to(REPO)),
+                         record["date"] + " editorial proposal")
 
     # Publish to the live gated Worker at telus-aeo.rahul-308.workers.dev.
     cloudflare_deploy()
