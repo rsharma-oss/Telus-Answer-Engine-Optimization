@@ -568,6 +568,24 @@ def _patch_exec_html(path, record_date, prev_date, pulls, score, prev_score,
                      matrix_curr, matrix_prev, audience_filter):
     """Idempotent patch of one exec HTML — safe to re-run."""
     src = path.read_text()
+    # 0) Defend against stacked-band drift. On the Oct 5 run, Rob + Jacob had
+    # two <div class="wow-band"> blocks (new Week N on top of stale Week N-1)
+    # because an older patch left the prior band in place. Collapse any such
+    # duplicates by keeping only the FIRST wow-band and discarding the rest.
+    bands = [m.start() for m in re.finditer(r'<div class="wow-band">', src)]
+    if len(bands) > 1:
+        # Remove each extra wow-band using balanced-div depth tracking.
+        for start in reversed(bands[1:]):
+            depth, end = 0, start
+            for m in re.finditer(r'<div\b|</div>', src[start:]):
+                depth += 1 if m.group().startswith("<div") else -1
+                if depth == 0:
+                    end = start + m.end()
+                    break
+            while end < len(src) and src[end] in "\n\r\t ":
+                end += 1
+            src = src[:start] + src[end:]
+        print(f"  [exec] {path.name}: collapsed {len(bands)-1} stale wow-band(s)")
     # 1) Version chip.
     src = re.sub(r'chip">v\.\d{4}-\d{2}-\d{2}', f'chip">v.{record_date}', src)
     # 2) Pull count — handle any prior "N weekly pulls on record".
