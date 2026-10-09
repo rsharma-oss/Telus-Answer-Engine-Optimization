@@ -70,6 +70,82 @@ def cloudflare_deploy():
               file=sys.stderr)
 
 
+# ------------- Weekly interactive-dashboard rebuild (TELUS only) -------------
+# The interactive full-report dashboard (D_ORIG + RAW_HISTORY JS blobs
+# powering the Prompts/Sentiment/Competitors/Citations tabs) is a separate
+# snapshot from the BANDTITLE/MATRIX top strip. Without this rebuild those
+# tabs show increasingly stale data week over week.
+#
+# telus-rebuild.py phase=fetch:
+#   - Clones github.com/rsharma-oss/ai-visibility-report to /tmp
+#   - Writes config with API key + skip_actions=true (no LLM dependency)
+#   - Runs build_fast.py → /tmp/ai-visibility-report/telus-full-report.html
+#   - Takes ~2-3 min, hits Peekaboo API ~25 times (within rate limits)
+#
+# Vendor-name leak discovered 2026-10-09: fetched template hardcodes
+# 'aipeekaboo.com' as a BRAND_CFG fallback in its dashboard JS. We scrub
+# it before copying anywhere near the deployed tree, and the existing
+# verify_scrub() in main() blocks the push if anything slips through.
+TELUS_REBUILD = pathlib.Path.home() / ".claude" / "scripts" / "telus-rebuild.py"
+REBUILD_OUT   = pathlib.Path("/tmp/ai-visibility-report/telus-full-report.html")
+
+
+def rebuild_full_report(record_date):
+    """Fresh dashboard rebuild. Non-fatal — on any failure the deployed
+    full-report.html stays as it is; the Monday top-band splice still runs.
+    Idempotent per date — safe to re-run."""
+    if not TELUS_REBUILD.exists():
+        print(f"  [rebuild] WARNING: {TELUS_REBUILD} missing — skipping dashboard rebuild",
+              file=sys.stderr)
+        return False
+    try:
+        env = {**__import__("os").environ,
+               "PATH": "/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin"}
+        r = subprocess.run(
+            [sys.executable, str(TELUS_REBUILD), "--phase", "fetch"],
+            env=env, capture_output=True, text=True, timeout=360,
+        )
+        if r.returncode != 0:
+            print(f"  [rebuild] fetch exit {r.returncode} — leaving current full-report "
+                  f"in place\n    stderr:{r.stderr[-500:]}", file=sys.stderr)
+            return False
+    except Exception as e:
+        print(f"  [rebuild] WARNING: fetch raised ({e}) — leaving current full-report "
+              f"in place", file=sys.stderr)
+        return False
+
+    if not REBUILD_OUT.exists():
+        print(f"  [rebuild] expected output {REBUILD_OUT} not written — skipping swap",
+              file=sys.stderr)
+        return False
+
+    # Scrub the vendor name from the fetched source BEFORE any copy anywhere
+    # near the deployed tree. Two patterns: 'aipeekaboo.com' (BRAND_CFG
+    # fallback) → 'telus.com'; bare 'peekaboo' (defensive) → 'measurement-platform'.
+    raw = REBUILD_OUT.read_text()
+    scrubbed, n1 = re.subn(r'aip[ea]{2}kaboo\.com', 'telus.com', raw, flags=re.IGNORECASE)
+    scrubbed, n2 = re.subn(r'p[ea]{2}kaboo', 'measurement-platform', scrubbed, flags=re.IGNORECASE)
+    if n1 or n2:
+        REBUILD_OUT.write_text(scrubbed)
+        print(f"  [rebuild] scrubbed vendor name ({n1} aipeekaboo.com + {n2} peekaboo)")
+
+    # Verify scrub landed.
+    if re.search(r'p[ea]{2}kaboo', REBUILD_OUT.read_text(), flags=re.IGNORECASE):
+        print(f"  [rebuild] ABORT: vendor name still present after scrub", file=sys.stderr)
+        return False
+
+    # Back up the current deployed full-report before overwrite, then swap.
+    live = REPO / "full-report.html"
+    if live.exists():
+        backup = REPO / f"full-report.html.bak-{record_date}"
+        backup.write_bytes(live.read_bytes())
+    live.write_bytes(REBUILD_OUT.read_bytes())
+    size_kb = live.stat().st_size // 1024
+    print(f"  [rebuild] swapped full-report.html ({size_kb}KB · fresh dashboard "
+          f"through {record_date})")
+    return True
+
+
 # ------------- Weekly archive stamping (TELUS only) -------------
 # Every Monday: copy the current exec PDFs into /archive/{name}-{yyyy-mm-dd}.pdf
 # so the URL is frozen for future reference, and prepend a row to /history.html.
@@ -86,6 +162,145 @@ EXEC_PDFS = [
 # Per-exec slug-substring filters used to pick WoW movers that resonate with
 # that audience. None = brand-wide (pick the biggest absolute movers overall).
 # If the filter yields fewer than 3 movers, we top it up with brand-wide movers.
+# ---------------- Actions-tab proposal governance ----------------
+# After rebuild_full_report() runs phase=fetch, the actions prompt sits at
+# /tmp/telus-actions-prompt.txt. write_actions_proposal() calls Claude with
+# that prompt, writes 6 proposed actions to data/editorial-proposals/
+# actions-{date}.md for Rahul's review. scripts/apply_actions.py applies the
+# approved set via phase=finalize. The Monday run NEVER auto-ships
+# LLM-generated actions — same governance invariant as exec headlines.
+
+ACTIONS_PROMPT_PATH = pathlib.Path("/tmp/telus-actions-prompt.txt")
+
+_ACTIONS_VOICE = (
+    "You generate exactly 6 AI-visibility action recommendations for TELUS "
+    "based on the data in the user prompt. Return ONLY a valid JSON array of "
+    "6 objects — no preamble, no markdown fence, no commentary. Each object "
+    "has: priority ('high'|'medium'), effort ('High effort'|'Med effort'), "
+    "cat ('Visibility'|'Content'|'Citation Strategy'|'Competitive'), "
+    "icon ('alert'|'list'|'play'|'zap'|'chat'|'map'|'search'|'shield'|'target'), "
+    "title (directive, max 90 chars), signals (array of 2-3 data points), "
+    "favDomains (array of 2-4 domains), why (paragraph with specific numbers "
+    "from the prompt data; no em dashes; no superlatives — banned: "
+    "unprecedented, historic, revolutionary, massive, huge, dramatic, "
+    "record-breaking, game-changing), steps (array of 4 steps; at least 2 "
+    "actions must start a step with 'This week:' or 'Today:'), outcome "
+    "(expected improvement + timeframe), platDomains (array of 3-5 domains). "
+    "Only use numbers/domains/competitors from the prompt data. Frame around "
+    "topic/entity ownership."
+)
+
+
+def _claude_actions(prompt_text):
+    """Call Anthropic API for 6 actions. Returns parsed list on success,
+    None on any failure (missing key, API error, invalid JSON, wrong count)."""
+    import os
+    key = (CFG_CACHE.get("anthropic_api_key") if isinstance(CFG_CACHE, dict) else None) \
+          or os.environ.get("ANTHROPIC_API_KEY")
+    if not key:
+        return None
+    body = json.dumps({
+        "model": "claude-sonnet-5",
+        "max_tokens": 6000,
+        "system": _ACTIONS_VOICE,
+        "messages": [{"role": "user", "content": prompt_text}],
+    }).encode()
+    req = urllib.request.Request("https://api.anthropic.com/v1/messages",
+                                 data=body, method="POST")
+    req.add_header("content-type", "application/json")
+    req.add_header("anthropic-version", "2023-06-01")
+    req.add_header("x-api-key", key)
+    try:
+        ctx = ssl.create_default_context(cafile="/etc/ssl/cert.pem")
+        with urllib.request.urlopen(req, timeout=90, context=ctx) as r:
+            res = json.loads(r.read().decode())
+        text = (res.get("content") or [{}])[0].get("text", "").strip()
+        if not text:
+            return None
+        # Tolerant parse — Claude might wrap in ```json ... ```.
+        text = re.sub(r'^```(?:json)?\s*', '', text)
+        text = re.sub(r'\s*```$', '', text)
+        actions = json.loads(text)
+        if not isinstance(actions, list) or len(actions) != 6:
+            print(f"  [actions] Claude returned {type(actions).__name__} "
+                  f"len={len(actions) if hasattr(actions,'__len__') else '?'} "
+                  f"— expected list of 6", file=sys.stderr)
+            return None
+        return actions
+    except Exception as e:
+        print(f"  [actions] Claude call failed ({e})", file=sys.stderr)
+        return None
+
+
+def write_actions_proposal(record_date):
+    """Writes data/editorial-proposals/actions-{date}.md — Claude's proposed
+    6 actions for Rahul's review. Monday run does NOT apply these; Rahul
+    reviews/edits/runs scripts/apply_actions.py to deploy."""
+    if not ACTIONS_PROMPT_PATH.exists():
+        print(f"  [actions] {ACTIONS_PROMPT_PATH} missing — skipping proposal "
+              f"(rebuild_full_report may have failed)", file=sys.stderr)
+        return None
+    prompt = ACTIONS_PROMPT_PATH.read_text()
+    actions = _claude_actions(prompt)
+
+    proposals_dir = REPO / "data" / "editorial-proposals"
+    proposals_dir.mkdir(parents=True, exist_ok=True)
+    out = proposals_dir / f"actions-{record_date}.md"
+
+    lines = [
+        f"# Actions proposal · {record_date}",
+        "",
+        "**Governance:** Monday's auto-run ships the full-report with the "
+        "'Actions skipped' placeholder (safe default). The 6 actions below "
+        "are Claude's proposed set for your review. To ship an edit, run:",
+        "",
+        f"```bash",
+        f"python3 scripts/apply_actions.py --date {record_date}",
+        f"```",
+        "",
+        "You can edit the JSON inline before applying — the parser reads the "
+        "FINAL code block in this file. To ship with Claude's proposal "
+        "unchanged, just run the apply command. To skip ship entirely, do "
+        "nothing — the deployed Actions tab stays on the placeholder.",
+        "",
+        "---",
+        "",
+        "## Source prompt",
+        "",
+        "```",
+        prompt.strip(),
+        "```",
+        "",
+        "---",
+        "",
+        "## Proposed actions",
+        "",
+    ]
+    if actions:
+        lines += [
+            "```json",
+            json.dumps(actions, indent=2, ensure_ascii=False),
+            "```",
+        ]
+        print(f"  [actions] wrote 6-action proposal → {out}")
+    else:
+        lines += [
+            "_(Claude unavailable — proposal left empty. Add an "
+            "`anthropic_api_key` to ~/.config/aeo-tracker/config.json "
+            "or env ANTHROPIC_API_KEY to enable Claude proposals.)_",
+            "",
+            "Hand-craft a JSON array of 6 action objects below and run the "
+            "apply command — the parser reads the last ```json block.",
+            "",
+            "```json",
+            "[]",
+            "```",
+        ]
+        print(f"  [actions] wrote empty proposal → {out} (no Claude key)")
+    out.write_text("\n".join(lines))
+    return out
+
+
 AUDIENCE_FILTERS = {
     "kevin-cmo":           None,
     "katherine-smb":       ["small-business", "business-owner", "cost-effective", "unlimited", "flexible"],
@@ -943,6 +1158,17 @@ def main():
     with out.open("a") as f:
         f.write(json.dumps(record, separators=(",", ": ")) + "\n")
     print(f"appended {record['date']} → {out}")
+    # Rebuild the interactive dashboard (D_ORIG + RAW_HISTORY blobs) from a
+    # fresh Peekaboo pull — the top-band splice below only touches BANDTITLE
+    # and MATRIX; the dashboard tabs (Prompts / Sentiment / Competitors /
+    # Citations) run off a separate snapshot that goes stale without this.
+    # Non-fatal: on failure the existing full-report.html is preserved and
+    # the top-band splice still runs.
+    if args.brand == "telus":
+        rebuild_full_report(record["date"])
+        # Write Claude's proposed 6 actions to a review file. Does NOT apply.
+        # Rahul reviews and runs scripts/apply_actions.py to ship.
+        write_actions_proposal(record["date"])
     # regenerate report band + matrix between markers
     report = REPO / "full-report.html"
     vis7 = call_tool(cfg, "get_brand_visibility", {"brandId": brand_id, "timeRange": "7d"}, ctx)

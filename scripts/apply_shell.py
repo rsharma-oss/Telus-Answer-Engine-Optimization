@@ -40,8 +40,10 @@ NAV_ITEMS = [
         ("platform.pdf",         "What's proprietary · Platform","PDF"),
         ("history.html",         "Weekly refresh · archive",   "HISTORY"),
     ]),
-    # Report is now gated behind the NDA modal. Any click routes to the landing with a flag.
-    ("index.html?open=nda-modal",  "Report",     "svg-report", "LOCKED"),
+    # Report is unlocked — any viewer past the Cloudflare pw gate reaches
+    # full-report.html directly. (The underlying Cloudflare Basic Auth still
+    # protects the whole site; this just removes the in-site NDA-modal detour.)
+    ("full-report.html",  "Report",     "svg-report", None),
     ("longitudinal.html", "Trajectory", "svg-trend", None),
 ]
 
