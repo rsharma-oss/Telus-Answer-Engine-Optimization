@@ -1,285 +1,205 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
 <title>Consumer Marcom Read · TELUS · Prepared for Rob Daintree</title>
-<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/scorecard-ga.css">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=DM+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#334FB4; --ink:#121212; --green:#2D9C56; --amber:#B45309;
+    --red:#B91C1C; --muted:#5B6675; --cloud:#F3F3F3; --border:#D1D5DB;
+    --paper:#fff; --orange:#EA580C;
+  }
+  @page{size:11in 8.5in;margin:0.3in 0.35in}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{font-family:'Assistant',sans-serif;color:var(--ink);line-height:1.3;font-size:10.5px;background:var(--paper)}
+  .wrap{width:10.3in;margin:0 auto}
+
+  .mast{display:flex;justify-content:space-between;align-items:flex-end;
+        border-bottom:2px solid var(--ink);padding:0 0 7px 0;margin-bottom:10px}
+  .mast-l .gb{font-size:12.5px;font-weight:800;letter-spacing:-.01em;line-height:1}
+  .mast-l .gb small{display:block;font-size:8.5px;font-weight:600;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-top:3px}
+  .mast-r{text-align:right;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+  .mast-r .chip{display:inline-block;background:var(--cloud);color:var(--blue);padding:3px 10px;border-radius:999px;font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.04em;margin-left:8px}
+
+  .hero{display:grid;grid-template-columns:1.1fr 2fr 1.5fr;gap:18px;align-items:center;
+        background:linear-gradient(135deg,rgba(51,79,180,.06),rgba(45,156,86,.04));
+        border:1px solid rgba(51,79,180,.18);border-radius:9px;padding:12px 18px;margin-bottom:11px}
+  .hero-score-wrap{display:flex;align-items:baseline;gap:11px}
+  .hero-score{font-size:44px;font-weight:800;color:var(--ink);line-height:1;letter-spacing:-.025em}
+  .hero-score small{font-size:16px;font-weight:600;color:var(--muted)}
+  .hero-delta{font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:var(--muted);
+              padding:4px 9px;border-radius:5px;background:rgba(91,102,117,.12)}
+  .hero-label{font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+  .spark{display:flex;align-items:flex-end;gap:5px;height:52px;flex:1}
+  .spark .b{flex:1;background:linear-gradient(to top,var(--blue) 0%,rgba(51,79,180,.6) 100%);border-radius:2px;position:relative}
+  .spark .b::after{content:attr(data-v);position:absolute;bottom:calc(100% + 2px);left:50%;transform:translateX(-50%);
+                   font-family:'DM Mono',monospace;font-size:7.5px;font-weight:700;color:var(--muted)}
+  .spark .b.latest{background:linear-gradient(to top,var(--green),rgba(45,156,86,.7))}
+  .spark-caption{font-size:8.5px;font-weight:700;color:var(--muted);text-align:right;letter-spacing:.04em;text-transform:uppercase;margin-top:3px}
+  .hero-ctx{font-size:10px;color:var(--ink);line-height:1.4;font-style:italic;padding-left:14px;border-left:3px solid rgba(51,79,180,.3)}
+  .hero-ctx b{font-style:normal;color:var(--ink)}
+
+  .norton{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;
+          background:linear-gradient(90deg,rgba(234,88,12,.09),rgba(234,88,12,.02));
+          border-left:4px solid var(--orange);border-radius:6px;padding:9px 14px;margin-bottom:11px}
+  .norton-tag{font-family:'DM Mono',monospace;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);
+              background:var(--paper);padding:4px 9px;border-radius:999px;border:1px solid var(--orange)}
+  .norton-body{font-size:10.5px;line-height:1.4;color:var(--ink)}
+  .norton-body b{color:var(--orange);font-weight:700}
+  .norton-cta{font-family:'DM Mono',monospace;font-size:9px;font-weight:700;color:var(--orange);white-space:nowrap}
+
+  .movers{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:11px}
+  .mover{padding:9px 12px;border-radius:7px;border:1px solid var(--border);font-size:10px;line-height:1.35}
+  .mover.up{background:rgba(45,156,86,.06);border-left:3px solid var(--green)}
+  .mover.down{background:rgba(185,28,28,.05);border-left:3px solid var(--red)}
+  .mover .delta{font-family:'DM Mono',monospace;font-weight:800;font-size:11px;margin-right:5px}
+  .mover.up .delta{color:var(--green)}
+  .mover.down .delta{color:var(--red)}
+  .mover .label{font-weight:700;color:var(--ink);display:block;margin-bottom:2px;font-size:10.5px}
+  .mover .score{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--muted);font-weight:600}
+
+  .cols{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:12px;margin-bottom:11px}
+  .col{border:1px solid var(--border);border-radius:8px;padding:11px 14px;background:var(--paper)}
+  .col-h{font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+         padding-bottom:6px;margin-bottom:7px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px}
+  .col-h .tag{display:inline-block;width:8px;height:8px;border-radius:50%}
+  .col.owns .col-h{color:var(--green)} .col.owns .col-h .tag{background:var(--green)}
+  .col.gaps .col-h{color:var(--red)}   .col.gaps .col-h .tag{background:var(--red)}
+  .col.moves .col-h{color:var(--blue)} .col.moves .col-h .tag{background:var(--blue)}
+  .row{display:grid;grid-template-columns:1fr auto;gap:7px;align-items:baseline;
+       padding:4.5px 0;border-bottom:1px dotted #E5E7EB;font-size:10px;line-height:1.3}
+  .row:last-child{border-bottom:none}
+  .row .lbl b{font-weight:700;color:var(--ink)}
+  .row .val{font-family:'DM Mono',monospace;font-weight:700;font-size:10.5px;color:var(--ink);white-space:nowrap}
+  .row .val.good{color:var(--green)}
+  .row .val.warn{color:var(--amber)}
+  .row .val.bad{color:var(--red)}
+  .col.moves .mv{padding:5.5px 0;border-bottom:1px dotted #E5E7EB;font-size:10px;line-height:1.4}
+  .col.moves .mv:last-child{border-bottom:none}
+  .col.moves .mv b{font-weight:700;color:var(--ink);display:block;margin-bottom:2px;font-size:10.5px}
+  .col.moves .mv span{color:var(--muted);font-size:9.5px;line-height:1.4}
+
+  .sources{border:1px solid var(--border);border-radius:8px;padding:9px 14px;margin-bottom:9px;background:var(--cloud)}
+  .sources-h{font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .chips{display:flex;flex-wrap:wrap;gap:5px}
+  .src-chip{display:inline-flex;align-items:center;gap:6px;background:var(--paper);border:1px solid var(--border);
+            border-radius:999px;padding:3px 10px;font-size:9.5px;font-weight:600;color:var(--ink)}
+  .src-chip.own{background:rgba(45,156,86,.14);border-color:rgba(45,156,86,.4);color:var(--green)}
+  .src-chip.rival{background:rgba(185,28,28,.07);border-color:rgba(185,28,28,.25);color:var(--red)}
+  .src-chip .v{font-family:'DM Mono',monospace;font-weight:800;font-size:9px;opacity:.75}
+
+  .foot{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;
+        background:linear-gradient(90deg,var(--ink),#1B1B2A);color:#fff;
+        border-radius:8px;padding:11px 16px;font-size:10px}
+  .foot-l{line-height:1.45}
+  .foot-l b{color:#fff;font-weight:700}
+  .foot-l .link{color:rgba(255,255,255,.72);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.02em;margin-right:9px}
+  .foot-cta{background:#fff;color:var(--blue);font-weight:800;padding:8px 16px;border-radius:5px;text-decoration:none;font-size:10.5px;letter-spacing:-.005em;white-space:nowrap}
+</style>
 </head>
 <body>
-
 <div class="wrap">
 
 <div class="mast">
-  <div class="gb-name">Growth Automated<small>Pragmatic AEO · Prepared for TELUS Consumer Marcom</small></div>
-  <div class="mast-right">CONSUMER MARCOM READ<span class="chip">v.2026-11-09</span><!-- GA-LOGO --><span class="mast-ga-cap"><span class="mast-ga-x" aria-hidden="true">|</span><img class="mast-ga-logo" src="assets/ga-logo-white.svg" alt="Growth Automated"></span></div>
+  <div class="mast-l">
+    <div class="gb">Growth Automated<small>Pragmatic AEO · CONSUMER MARCOM READ · Prepared for TELUS · Rob Daintree</small></div>
+  </div>
+  <div class="mast-r">
+    CONSUMER MARCOM READ<span class="chip">v.2026-11-09 · W19</span>
+  </div>
 </div>
 
 <div class="hero">
-  <div class="kicker">Prepared for Rob Daintree · Director, Consumer Marcom · TELUS</div>
-  <h1>Consumer answers are where <em>your team's work</em> shows up.<br>Two <span class="u">holds</span>, two <span class="u">lifts</span>, two <span class="u">watches</span> this week.</h1>
-  <p class="lede">
-    On the consumer-side questions Canadian buyers actually ask AI systems today — family plans, wireless affordability, 5G speed, customer service, home internet, activation fees, moving to Canada — TELUS is present in the answer <strong>78% of the time on average</strong>, with the branded-satisfaction questions locked at 96–100 and two consumer-need questions moving in our favour this week (family unlimited +6, activation-fee sentiment +10). This is the operator-level view of the consumer marcom surface, filtered from the twenty-question panel.
-  </p>
-  <p class="lede">
-    <strong>What this scorecard gives you</strong> is the weekly consumer-narrative diff: what the AI is saying, what shifted, which competitor moved, and which discourse sources are shaping the answer. It's the input for your Tuesday-morning briefing to Kevin and the working file for the consumer content lane that runs against Reddit, YouTube, WhistleOut and forum.telus.com.
-  </p>
-</div>
-
-<!-- ============ WEEK 13 · WoW ============ -->
-<div class="wow-band">
-  <div class="wow-l">
-    <div class="wow-tag">WEEK 19 &middot; WHAT SHIFTED &middot; NOV 2 – NOV 9</div>
-    <div class="wow-h">Panel-wide 74/100 (held at 74). Biggest mover: Activation-fee sentiment 55 → 45.</div></div>
-  <div class="wow-r"><div class="wow-row down"><span class="wow-arrow">▼</span><span class="wow-label"><b>Activation-fee sentiment</b> 55 → 45</span><span class="wow-note">-10pp</span></div><div class="wow-row up"><span class="wow-arrow">▲</span><span class="wow-label"><b>Family-plan affordability</b> 47 → 56</span><span class="wow-note">+9pp</span></div><div class="wow-row up"><span class="wow-arrow">▲</span><span class="wow-label"><b>Flexible mobile data</b> 32 → 37</span><span class="wow-note">+5pp</span></div></div>
-</div>
-
-<!-- ============ WEEK 13 · WoW ============ -->
-<!-- ================= 1 · BRAND HEALTH ================= -->
-<section>
-  <div class="sec-num">01</div>
-  <h2>Brand health, in the answer layer</h2>
-  <div class="sec-sub">The share of AI responses to Canadian telco buying questions that name TELUS. Thirty-day window ending October 5.</div>
-
-  <div class="health">
-    <div>
-      <div class="health-t">TELUS · consumer-side share of answer</div>
-      <div class="big">78<small>/100</small></div>
-      <div class="cap">Averaged across the <strong>10 consumer-facing questions</strong> in the panel (family, mobile affordability, 5G, customer service, home internet, activation fees, moving to Canada, provider satisfaction, reliability). TELUS holds 78% share of the consumer answer — vs. Bell/Rogers ~35 on the same slice, and Freedom in single digits. Sub-scores below.</div>
+  <div>
+    <div class="hero-score-wrap">
+      <div class="hero-score">74<small>/100</small></div>
+      <div class="hero-delta">■ flat vs Nov 2</div>
     </div>
-    <div class="health-r">
-      <div class="health-r-title">The consumer story showing up</div>
-      <ul>
-        <li><strong>General satisfaction</strong> · 100/100</li>
-        <li><strong>Customer service</strong> · positive 100/100</li>
-        <li><strong>Rural reliability</strong> · 100/100</li>
-        <li><strong>5G speed vs Bell/Rogers</strong> · 96/100</li>
-        <li><strong>Family unlimited</strong> · 61/100 <span style="color:var(--green)">(+6 WoW)</span></li>
-        <li><strong>Activation-fee sentiment</strong> · 53/100 <span style="color:var(--green)">(+10 WoW)</span></li>
-      </ul>
-    </div>
+    <div class="hero-label">Panel-wide TELUS · 7-day · 2,000 runs · 22 pulls on record</div>
   </div>
-</section>
-
-<!-- ================= 2 · WHAT THE AI SAYS ================= -->
-<section>
-  <div class="sec-num">02</div>
-  <h2>What the AI actually says about TELUS · consumer view</h2>
-  <div class="sec-sub">Seven consumer questions — mix of branded (buyer names TELUS) and category (buyer describes a need). Each row: what the AI says back, what shifted this week, what it means for consumer marcom.</div>
-
-  <table class="nar">
-    <thead><tr><th style="width:44%">Branded question</th><th>What the AI narrative says</th><th class="r">Share</th></tr></thead>
-    <tbody>
-      <tr>
-        <td class="q">Does Telus offer reliable service for rural residents in 2026?</td>
-        <td class="narrative"><strong>TELUS is the answer.</strong> Cited with network-coverage evidence. Locked position.</td>
-        <td class="r"><span class="v win">100<small>/100</small></span></td>
-      </tr>
-      <tr>
-        <td class="q">Who feels that Telus provides the best value among Canadian telcos?</td>
-        <td class="narrative"><strong>"Value" narrative is locked</strong> — TELUS surfaces in nearly every response, even when the question tests it.</td>
-        <td class="r"><span class="v win">99<small>/100</small></span></td>
-      </tr>
-      <tr>
-        <td class="q">Has anyone been disappointed with Telus' home internet service?</td>
-        <td class="narrative">Even on <strong>negative-framed</strong> questions, TELUS shows up 94/100 — <span style="color:var(--amber)">down from 99 last week</span>. Watch item for the CMO — see Section 3.</td>
-        <td class="r"><span class="v watch">94<small>/100</small></span></td>
-      </tr>
-      <tr>
-        <td class="q">Anyone have positive experiences with Telus customer service when resolving issues?</td>
-        <td class="narrative">Customer-service narrative is <strong>strongly positive</strong> and consistently cited — a real asset.</td>
-        <td class="r"><span class="v win">98<small>/100</small></span></td>
-      </tr>
-      <tr>
-        <td class="q">For those who've recently tried Telus' 5G service, how's the speed compared to Bell or Rogers?</td>
-        <td class="narrative">TELUS wins the <strong>5G speed comparison</strong> — evidence comes from OpenSignal, Reddit threads, YouTube reviews.</td>
-        <td class="r"><span class="v win">97<small>/100</small></span></td>
-      </tr>
-      <tr>
-        <td class="q">Is switching to Telus from Rogers for better internet speeds actually worth it?</td>
-        <td class="narrative">TELUS wins the <strong>competitive-switch</strong> narrative against Rogers explicitly.</td>
-        <td class="r"><span class="v win">96<small>/100</small></span></td>
-      </tr>
-      <tr>
-        <td class="q">What do business owners think about using Telus for their telecom needs?</td>
-        <td class="narrative">Business-owner sentiment <strong>recovered to 100</strong> this week — July's dip to 95 has closed. Reddit/forum discourse held.</td>
-        <td class="r"><span class="v win">100<small>/100</small></span></td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="note">
-    <strong>The through-line.</strong> On branded queries, TELUS's answer-layer position is more than presence — the AI systems have absorbed the brand story deeply enough to defend it even when the question tests it. That's the compound return on brand and PR investment. It's also the thing a CMO can most easily <em>underestimate</em> — because it looks like nothing is happening.
+  <div>
+    <div class="spark"><div class="b" data-v="100" style="height:90%"></div><div class="b" data-v="84" style="height:59%"></div><div class="b" data-v="79" style="height:49%"></div><div class="b" data-v="78" style="height:47%"></div><div class="b" data-v="74" style="height:40%"></div><div class="b" data-v="75" style="height:42%"></div><div class="b" data-v="75" style="height:42%"></div><div class="b" data-v="74" style="height:40%"></div><div class="b" data-v="75" style="height:42%"></div><div class="b" data-v="74" style="height:41%"></div><div class="b latest" data-v="76" style="height:43%"></div></div><div class="spark-caption">Weekly trajectory · 2026-10-18 → 2026-11-09</div>
   </div>
-</section>
-
-<!-- ================= 3 · EROSION ================= -->
-<section>
-  <div class="sec-num">03</div>
-  <h2>Three narrative signals worth naming</h2>
-  <div class="sec-sub">Small drifts. None are alarming individually. Worth surfacing to your executive team before they become issues that show up in ARPU or NPS.</div>
-
-  <div class="er-row">
-    <div class="er">
-      <div class="er-tag">■ NEW WATCH · HOME INTERNET</div>
-      <div class="er-v">−5<small>pts WoW</small></div>
-      <div class="er-t">Home-internet defence slipped</div>
-      <div class="er-b">"Has anyone been disappointed with Telus' home internet service?" — TELUS's defended answer moved <strong>99 → 94</strong>. Reddit/forum discourse worth a same-day read; if a specific complaint thread trended, the consumer-content lane can respond directly.</div>
-    </div>
-    <div class="er">
-      <div class="er-tag">■ NEW WATCH · RELIABILITY</div>
-      <div class="er-v">−4<small>pts WoW</small></div>
-      <div class="er-t">Provider-reliability query softened</div>
-      <div class="er-b">"Is there a telecommunications company known for reliability in 2026?" — TELUS share moved <strong>66 → 62</strong>. Reliability is a moat position for us; a two-week slide would be worth escalating. This week: monitor, not act.</div>
-    </div>
-    <div class="er">
-      <div class="er-tag">■ LIFT · FAMILY UNLIMITED</div>
-      <div class="er-v">+6<small>pts WoW</small></div>
-      <div class="er-t">Family unlimited moving our way</div>
-      <div class="er-b">"Which provider has the best family unlimited data plans in 2026?" — TELUS moved <strong>55 → 61</strong>. Whichever consumer content or PR landed here this month is working. Lean in for Q4.</div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= 4 · THE EARNED SURFACE ================= -->
-<section>
-  <div class="sec-num">04</div>
-  <h2>The earned surface — where the answer is actually formed</h2>
-  <div class="sec-sub">Top domains the up to seven AI systems cite when answering these questions. AI answers reward earned narrative — not brand campaigns.</div>
-
-  <div class="src-strip">
-    <div class="src-chip reddit">reddit.com<span class="v">85</span></div>
-    <div class="src-chip own">telus.com<span class="v">62</span></div>
-    <div class="src-chip">facebook.com<span class="v">55</span></div>
-    <div class="src-chip">whistleout.ca<span class="v">54</span></div>
-    <div class="src-chip">youtube.com<span class="v">52</span></div>
-    <div class="src-chip rival">bell.ca<span class="v">48</span></div>
-    <div class="src-chip">opensignal.com<span class="v">48</span></div>
-    <div class="src-chip own">forum.telus.com<span class="v">43</span></div>
-    <div class="src-chip">planhub.ca<span class="v">43</span></div>
-    <div class="src-chip">ca.trustpilot.com<span class="v">43</span></div>
-  </div>
-
-  <div class="pattern">
-    <p>
-      <strong>Reddit's influence (85) exceeds every carrier's own domain.</strong> When an AI decides who to recommend, r/canada, r/PersonalFinanceCanada, r/CanadianISPs and r/TELUS threads shape the answer more than any TELUS campaign or press release. This is the earned surface.
-    </p>
-    <p>
-      <strong>bell.ca (48) out-influences forum.telus.com (43)</strong> in the AI citation pool. Bell's own domain is showing up in Canadian telco AI answers slightly more than TELUS's own community forum. Not a five-alarm fire — but a real CMO signal about relative content velocity.
-    </p>
-    <p>
-      <strong>The comparison-site layer (WhistleOut 54, PlanHub 43, Trustpilot 43)</strong> is where AIs go for pricing shortlists. Refreshed listings and current TELUS positioning here is one of the cheapest brand-narrative interventions with measurable answer-share lift.
-    </p>
-  </div>
-
-  <!-- ============ SHARE OF CITATION SOURCES · auto-populated weekly ============ -->
-  <div class="src-share-head">
-    <div class="src-share-title">Share of citation sources &middot; 30d</div>
-    <div class="src-share-sub">The share of all source citations the AI engines pull from when answering the 20 consumer ICP questions. WoW deltas against the prior stored snapshot.</div>
-  </div>
-  <!-- SOURCES:START --><div class="src-row "><span class="src-dom">reddit.com</span><span class="src-bar"><span style="width:86%"></span></span><span class="src-pct">8.6%</span><span class="src-wow up">+0.3pp</span></div><div class="src-row own"><span class="src-dom">telus.com</span><span class="src-bar"><span style="width:69%"></span></span><span class="src-pct">6.9%</span><span class="src-wow down">-0.4pp</span></div><div class="src-row "><span class="src-dom">crtc.gc.ca</span><span class="src-bar"><span style="width:59%"></span></span><span class="src-pct">5.9%</span><span class="src-wow up">+0.3pp</span></div><div class="src-row "><span class="src-dom">whistleout.ca</span><span class="src-bar"><span style="width:45%"></span></span><span class="src-pct">4.5%</span><span class="src-wow up">+0.3pp</span></div><div class="src-row own"><span class="src-dom">forum.telus.com</span><span class="src-bar"><span style="width:30%"></span></span><span class="src-pct">3.0%</span><span class="src-wow flat">new</span></div><div class="src-row "><span class="src-dom">facebook.com</span><span class="src-bar"><span style="width:29%"></span></span><span class="src-pct">2.9%</span><span class="src-wow flat">flat</span></div><!-- SOURCES:END -->
-
-  <div class="credential-stripe">
-    <strong>Reddit partner since 2024</strong> &middot; Rahul can walk the operating lens on what moves inside r/CanadianTelecom, r/TELUS and r/canadianISPs whenever useful.
-  </div>
-</section>
-
-<!-- ================= 5 · CATEGORY GAP ================= -->
-<section>
-  <div class="sec-num">05</div>
-  <h2>Where the category narrative isn't in the answer</h2>
-  <div class="sec-sub">Five questions where a Canadian buyer describes a need without naming a carrier. On branded questions TELUS's brand story is dominant. On these, it's absent — because "TELUS Business" as a brand story does not extend into the category-answer layer.</div>
-
-  <div class="cat-row">
-    <div class="cat"><div class="q">"Buy best wireline solution for my home office setup."</div><div class="v">10<small>/100</small></div></div>
-    <div class="cat"><div class="q">"Are there flexible mobile data plans I can adjust monthly based on usage?"</div><div class="v">8<small>/100</small></div></div>
-    <div class="cat"><div class="q">"My small business needs a cost-effective wireless solution with unlimited data."</div><div class="v">35<small>/100</small></div></div>
-    <div class="cat"><div class="q">"What do most families do when they find their wireless plan too expensive?"</div><div class="v">40<small>/100</small></div></div>
-    <div class="cat"><div class="q">"How do people feel about activation and setup fees charged by Canadian wireless carriers?"</div><div class="v">53<small>/100</small></div></div>
-  </div>
-
-  <div class="note">
-    <strong>The CMO read.</strong> These aren't brand-defence questions. They're the moments where <em>category narrative</em> gets set. TELUS Business as a story doesn't currently extend into specific buyer needs (home office, flex data, cost-effective, activation transparency). This is where brand narrative can genuinely <strong>own the category</strong>, not just react to it — and where Katherine's SMB moves &amp; David's Telco Division agenda naturally converge with brand strategy.
-  </div>
-</section>
-
-<!-- ================= 6 · CMO MOVES ================= -->
-<section>
-  <div class="sec-num">06</div>
-  <h2>Five CMO moves for the answer surface</h2>
-  <div class="sec-sub">The brand-narrative interventions that shape what the AI answers next. Ordered by leverage.</div>
-
-  <table class="mv-tbl">
-    <thead>
-      <tr><th style="width:26px"></th><th>Move</th><th>What it changes</th><th class="r">Signal in</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="n">1</td>
-        <td class="t"><strong>Same-day Reddit/forum read on the home-internet watch</strong>Pull the top r/CanadianISPs and forum.telus.com threads from the last 7 days on home internet. If a specific issue trended, brief the community lane.</td>
-        <td class="t">Ad-hoc reaction → same-week discourse response</td>
-        <td class="r impact">This week</td>
-      </tr>
-      <tr>
-        <td class="n">2</td>
-        <td class="t"><strong>Lean the family unlimited content lane</strong>Whatever landed this month worked (+6). Extend the working assets — comparison-site listings, YouTube family-plan videos, WhistleOut positioning — through Q4.</td>
-        <td class="t">One-off content → sustained family-unlimited push</td>
-        <td class="r impact">4–6 wk</td>
-      </tr>
-      <tr>
-        <td class="n">3</td>
-        <td class="t"><strong>Activation-fee sentiment — brief legal + PR to keep pushing</strong>+10 WoW says the fee-transparency messaging is landing. Coordinate a quarterly consumer PR moment on activation clarity.</td>
-        <td class="t">Ad-hoc talking point → repeated content beat</td>
-        <td class="r impact">Q4</td>
-      </tr>
-      <tr>
-        <td class="n">4</td>
-        <td class="t"><strong>Refresh comparison-site consumer positioning</strong>WhistleOut, PlanHub, OpenSignal, Trustpilot listings audited quarterly. Cheapest measurable move against Bell's Rogers-view mobile climb.</td>
-        <td class="t">Stale listings → current TELUS story in the citation layer</td>
-        <td class="r impact">4–6 wk</td>
-      </tr>
-      <tr>
-        <td class="n">5</td>
-        <td class="t"><strong>Weekly WoW brief to Kevin</strong>Every Tuesday: one page. What the consumer AI answer said this week, what shifted, what your lane did about it. Kevin gets the durable read, you get the operating record.</td>
-        <td class="t">Verbal updates → durable operating brief</td>
-        <td class="r impact">Ongoing · every Tuesday</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="move">
-    <div class="move-h"><div class="move-t">Where this fits in the meeting cadence</div><div class="move-tag">Rob's operating lane</div></div>
-    <div class="move-b">This is the weekly consumer-marcom operating brief. Kevin reads the brand-narrative version monthly. Jacob runs the day-to-day organic execution against the same source citation set. You (Rob) are the layer where the consumer story becomes weekly action — the Tuesday brief to Kevin, the community-and-comparison-site lane, the Q4 consumer campaign map. <em>One instrument, three operating cadences.</em></div>
-  </div>
-</section>
-
-<!-- ================= 7 · METHODOLOGY ================= -->
-<section>
-  <div class="sec-num">07</div>
-  <h2>Methodology, for the room</h2>
-
-  <div class="method">
-    <p><strong>The panel.</strong> 20 realistic Canadian-telco buying questions asked every Monday of up to 7 AI systems — ChatGPT, Gemini, Perplexity, Google AI Overview, Google AI Mode, plus Microsoft Copilot and Claude (Copilot + Claude on-boarding from Week 19). Results appended to a durable, append-only tracking store. 19 weekly pulls on record.</p>
-    <p><strong>What "share of answer" means.</strong> % of AI responses that contain a substantive mention or citation of the brand, within the measured window. Scores directly comparable across brands and across time.</p>
-    <p><strong>How this differs from brand-tracker research.</strong> A brand tracker asks humans what they remember. This measures what the machine layer <em>recommends</em> to a real buyer in the moment of decision. The two correlate, but the answer-layer read leads — it's a leading indicator for the tracker.</p>
-    <p><strong>What this scorecard is not.</strong> Not an SEO ranking report. Not a media-monitoring feed. Not a predictive model. It is a weekly measurement of which brands and narratives the AI assistants surface to Canadian buyers — treated as brand-equity input for the CMO's executive team.</p>
-  </div>
-</section>
-
-<!-- GA-CTA -->
-<div class="exec-cta">
-  <div class="exec-cta-lede">Want this same read on <b>your</b> lens of the panel? <span class="exec-cta-terms">Founding subscriber terms open &middot; 9 seats &middot; Monday reads begin the week you sign</span></div>
-  <div class="exec-cta-r">
-    <a class="exec-cta-mail" href="mailto:rahul@growthautomated.ai?subject=Canadian%20Telco%20AEO%20Panel">rahul@growthautomated.ai</a>
-    <a class="exec-cta-btn" href="https://seo-for-ai.growthautomated.ai/book_time" target="_blank" rel="noopener">Book time with Rahul</a>
+  <div class="hero-ctx">
+    Consumer answers are where your team's work shows up. <b>Two holds, two lifts, two watches</b> this week — all actionable inside quarterly comms planning, none requiring product calls.
   </div>
 </div>
 
-<footer>
-  Prepared for <strong>Rob Daintree · Director, Consumer Marcom · TELUS</strong> · September 28, 2026<br>
-  Growth Automated · <strong>rahul@growthautomated.ai</strong> · <span style="color:var(--blue)">Confidential — do not distribute</span>
-</footer>
+<div class="norton">
+  <div class="norton-tag">★ NEW SIGNAL · Launch Week 2</div>
+  <div class="norton-body">
+    The <b>Norton-powered Scam Protection launch</b> (TELUS's first security-themed brand push) is already appearing in AI answers — cited on TELUS Business Mobility snippets alongside Spam Call Detect. <b>4 new security-intent prompts</b> added to the panel this week to measure share-of-answer directly.
+  </div>
+  <div class="norton-cta">TRACKING<br>FROM W19</div>
+</div>
+<div class="movers">
+  <div class="mover up"><span class="delta">▲ +17</span><span class="label">Sign up for 2026 bundle deal: phone plans…</span><span class="score">55 → 72 · major mover</span></div>
+  <div class="mover up"><span class="delta">▲ +15</span><span class="label">Which provider has the best family unlimi…</span><span class="score">75 → 90 · major mover</span></div>
+  <div class="mover down"><span class="delta">▼ -11</span><span class="label">How do people feel about activation and s…</span><span class="score">55 → 43 · major mover</span></div>
+  <div class="mover down"><span class="delta">▼ -11</span><span class="label">My small business needs a cost-effective…</span><span class="score">53 → 41 · major mover</span></div>
+</div>
+
+<div class="cols">
+
+  <div class="col owns">
+    <div class="col-h"><span class="tag"></span>Where TELUS owns the answer</div>
+    <div class="row"><span class="lbl"><b>Family unlimited data (lifted)</b></span><span class="val good">90</span></div>
+    <div class="row"><span class="lbl"><b>TELUS 5G experience</b></span><span class="val good">99</span></div>
+    <div class="row"><span class="lbl"><b>Rural service reliability</b></span><span class="val good">97</span></div>
+    <div class="row"><span class="lbl"><b>Switching from Rogers worth it</b></span><span class="val good">95</span></div>
+    <div class="row"><span class="lbl"><b>Business-owner satisfaction</b></span><span class="val good">100</span></div>
+    <div class="row"><span class="lbl"><b>Moving to Canada wireless</b></span><span class="val good">78</span></div>
+  </div>
+
+  <div class="col gaps">
+    <div class="col-h"><span class="tag"></span>Where the category isn't in the answer</div>
+    <div class="row"><span class="lbl"><b>Strict budget cell plan</b></span><span class="val bad">7</span></div>
+    <div class="row"><span class="lbl"><b>Unlimited skepticism</b></span><span class="val bad">17</span></div>
+    <div class="row"><span class="lbl"><b>Flex mobile data</b></span><span class="val warn">37</span></div>
+    <div class="row"><span class="lbl"><b>Activation-fee sentiment</b></span><span class="val warn">43</span></div>
+    <div class="row"><span class="lbl"><b>Bell 5G comparison</b></span><span class="val warn">63</span></div>
+    <div class="row"><span class="lbl"><b>Family too-expensive pivot</b></span><span class="val warn">58</span></div>
+  </div>
+
+  <div class="col moves">
+    <div class="col-h"><span class="tag"></span>Director moves this week</div>
+    <div class="mv"><b>1 · Protect the family-unlimited recovery</b><span>75→90 in one week after October's softening. Lock the content — PR, comparison-site listings, Reddit presence — before Bell counters.</span></div>
+    <div class="mv"><b>2 · Respond on activation-fee sentiment</b><span>Dropped 11 points this week (55→43). Not a crisis yet; is a content prompt. Short, honest AMA-style response wins back the AI citations.</span></div>
+    <div class="mv"><b>3 · Wire the Norton narrative into marcom</b><span>Norton launch is TELUS's first security-themed brand push and is already surfacing in AI answers. Four new prompts added this week.</span></div>
+    <div class="mv"><b>4 · 5G ceiling defense</b><span>99/100 on 5G experience. Refresh OpenSignal citation + Reddit mentions quarterly so Bell's content push doesn't erode the lead.</span></div>
+  </div>
+
+</div>
+
+<div class="sources">
+  <div class="sources-h">Top AI citation sources · 30d · what the AI reads to answer</div>
+  <div class="chips">
+    <span class="src-chip ">reddit.com <span class="v">18.3%</span></span>
+    <span class="src-chip own">telus.com <span class="v">14.9%</span></span>
+    <span class="src-chip ">crtc.gc.ca <span class="v">12.7%</span></span>
+    <span class="src-chip ">whistleout.ca <span class="v">10.4%</span></span>
+    <span class="src-chip ">facebook.com <span class="v">6.1%</span></span>
+    <span class="src-chip own">forum.telus.com <span class="v">6.1%</span></span>
+    <span class="src-chip ">planhub.ca <span class="v">5.7%</span></span>
+    <span class="src-chip ">mobilesyrup.com <span class="v">5.7%</span></span>
+    <span class="src-chip ">ca.trustpilot.com <span class="v">5.3%</span></span>
+    <span class="src-chip rival">bell.ca <span class="v">5.0%</span></span>
+    <span class="src-chip ">insights.opensignal.com <span class="v">5.0%</span></span>
+    <span class="src-chip ">trustpilot.com <span class="v">4.9%</span></span>
+  </div>
+</div>
+
+<div class="foot">
+  <div class="foot-l">
+    <b>Rahul Sharma · Growth Automated</b> · rahul@growthautomated.ai · 20 Canadian-telco questions × up to 7 AI systems — ChatGPT, Gemini, Perplexity, Google AIO, Google AI Mode, plus Microsoft Copilot and Claude (Copilot + Claude on-boarding from Week 19) · 22 pulls on record<br>
+    <span class="link">Full read: telus-aeo.rahul-308.workers.dev/rob-consumer-marcom.pdf</span>
+    <span class="link">Portal: telus-aeo.rahul-308.workers.dev</span>
+  </div>
+  <a href="https://seo-for-ai.growthautomated.ai/book_time" class="foot-cta">Book 30 min with Rahul →</a>
+</div>
 
 </div>
 </body></html>
